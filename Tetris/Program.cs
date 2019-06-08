@@ -29,16 +29,24 @@ namespace Tetris
             engine.DrawBlackCanvas();
             engine.SetLevel();
             engine.SetTimer();
-            engine.SetCurrentTetromino();
-            engine.PutTetrominoOnCurrentGrid();
-            engine.StartTimer();
 
             while (true)
             {
-                engine.CheckKeyboard();
-                engine.CheckCollision();
-                engine.RedrawScreen();
+                engine.SetCurrentTetromino();
+                engine.PutTetrominoOnCurrentGrid();
+                engine.StartTimer();
+
+                while (true)
+                {
+                    engine.CheckKeyboard();
+                    engine.CheckCollision();
+                    engine.RedrawScreen();
+                    if (engine.UpdateGrid())
+                        break;
+                }
+
             }
+
 
         }
     }

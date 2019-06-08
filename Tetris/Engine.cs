@@ -154,5 +154,18 @@ namespace Tetris
             currentGrid.DropFullLines(); // This line belongs to this position. You move it - you break everything.
             currentGrid.ConvertBoolDataToPixelData();
         }
+
+        public bool UpdateGrid()
+        {
+            bool gridHasBeenUpdated = false; 
+
+            if (timer.Enabled == false)
+            {
+                grid.FeedWithBoolData(currentGrid);
+                gridHasBeenUpdated = true;
+            }
+            return gridHasBeenUpdated;
+
+        }
     }
 }
