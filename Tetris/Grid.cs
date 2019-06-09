@@ -16,24 +16,21 @@ namespace Tetris
 
     class Grid
     {
-        static public byte lineSize = 21;
-        static public byte columnSize = 10;
-
         public bool[,] BoolData { get; private set; }
         public List<Pixel> PixelData { get; private set; }
 
         public Grid()
         {
-            BoolData = new bool[lineSize, columnSize];
+            BoolData = new bool[Settings.LineNumber, Settings.ColumnNumber];
             PixelData = new List<Pixel>();
         }
 
         public void FeedWithBoolData(Grid gridToCopyFrom)
         {
-            bool[,] newBoolData = new bool[lineSize, columnSize];
+            bool[,] newBoolData = new bool[Settings.LineNumber, Settings.ColumnNumber];
 
-            for (int x = 0; x < lineSize; x++)
-                for (int y = 0; y < columnSize; y++)
+            for (int x = 0; x < Settings.LineNumber; x++)
+                for (int y = 0; y < Settings.ColumnNumber; y++)
                     newBoolData[x, y] = gridToCopyFrom.BoolData[x, y];
 
             BoolData = newBoolData;
@@ -53,8 +50,8 @@ namespace Tetris
         public void ConvertBoolDataToPixelData()
         {
             //PixelData = new List<Pixel>();
-            for (int x = 0; x < lineSize; x++)
-                for (int y = 0; y < columnSize; y++)
+            for (int x = 0; x < Settings.LineNumber; x++)
+                for (int y = 0; y < Settings.ColumnNumber; y++)
                 {
                     if (BoolData[x, y])
                         PixelData.Add(new Pixel(x, y));
@@ -63,8 +60,8 @@ namespace Tetris
 
         public void FillDataBoolWithRandomData(int startLine)
         {
-            for (int x = startLine; x < lineSize; x++)
-                for (int y = 0; y < columnSize; y++)
+            for (int x = startLine; x < Settings.LineNumber; x++)
+                for (int y = 0; y < Settings.ColumnNumber; y++)
                 {
                     if (Program.random.Next(0, 2) == 1)
                         BoolData[x, y] = true;
@@ -83,10 +80,10 @@ namespace Tetris
         {
             List<bool[]> linesToKeep = new List<bool[]>();
 
-            for (int line = 0; line < lineSize; line++)
+            for (int line = 0; line < Settings.LineNumber; line++)
             {
                 bool lineHasGaps = false;
-                for (int column = 0; column < columnSize; column++)
+                for (int column = 0; column < Settings.ColumnNumber; column++)
                 {
                     if (!BoolData[line, column])
                     {
@@ -96,8 +93,8 @@ namespace Tetris
                 }
                 if (lineHasGaps)
                 {
-                    bool[] lineToKeep = new bool[columnSize];
-                    for (int column = 0; column < columnSize; column++)
+                    bool[] lineToKeep = new bool[Settings.ColumnNumber];
+                    for (int column = 0; column < Settings.ColumnNumber; column++)
                     {
                         lineToKeep[column] = BoolData[line, column];
                     }
@@ -108,16 +105,16 @@ namespace Tetris
             int emptyLinesToAdd = BoolData.GetLength(0) - linesToKeep.Count;
             UpdateScores(emptyLinesToAdd);
 
-            bool[,] newBoolData = new bool[lineSize, columnSize];
+            bool[,] newBoolData = new bool[Settings.LineNumber, Settings.ColumnNumber];
 
-            for (int line = emptyLinesToAdd; line < lineSize; line++)
-                for (int column = 0; column < columnSize; column++)
+            for (int line = emptyLinesToAdd; line < Settings.LineNumber; line++)
+                for (int column = 0; column < Settings.ColumnNumber; column++)
                 {
                     newBoolData[line, column] = linesToKeep[line - emptyLinesToAdd][column];
                 }
 
-            for (int x = 0; x < lineSize; x++)
-                for (int y = 0; y < columnSize; y++)
+            for (int x = 0; x < Settings.LineNumber; x++)
+                for (int y = 0; y < Settings.ColumnNumber; y++)
                     BoolData[x, y] = newBoolData[x, y];
         }
 

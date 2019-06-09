@@ -11,8 +11,8 @@ namespace Tetris
         public const int ConsoleWidth = 100;
         public const int ConsoleHeight = 50;
 
-        public const int LineNumber = 21;       // FindAndReplace
-        public const int ColumnNumber = 10;     // FindAndReplace
+        public const int LineNumber = 21;  
+        public const int ColumnNumber = 10;
 
         public const int canvasOffsetX = (8 * ConsoleWidth - 10 * PixelSizeX) / 2;
         public const int canvasOffsetY = 50;
