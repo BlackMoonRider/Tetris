@@ -61,42 +61,6 @@ namespace Tetris
                 }
         }
 
-        // Returns true if the current shape collides with the bool data
-        public bool CheckCurrentShapeCollision()
-        {
-            bool result = false;
-
-            for (int line = 0; line < CurrentShape.Rotation.GetLength(0); line++)
-                for (int column = 0; column < CurrentShape.Rotation.GetLength(1); column++)
-                {
-                    if (CurrentShape.Rotation[line, column] && BoolData[line + CurrentShape.PositionLine, column + CurrentShape.PositionColumn])
-                        result = true;
-                }
-
-            return result;
-        }
-
-        // Returns true if the current shape is out of the up or bottom of the screen 
-        public bool CheckCurrentShapeOutOfScreenUpBottom()
-        {
-            if (CurrentShape.PositionLine + CurrentShape.Rotation.GetLength(0) + 1 > lineSize ||
-                CurrentShape.PositionLine < 0)
-                return true;
-
-            return false;
-        }
-
-        // Returns true if the current shape is out of the left or right side of the screen 
-        public OutOfScreenProperties CheckCurrentShapeOutOfScreenLeftRight()
-        {
-            if (CurrentShape.PositionColumn + CurrentShape.Rotation.GetLength(1) > columnSize)
-                return OutOfScreenProperties.Right;
-            if (CurrentShape.PositionColumn < 0)
-                return OutOfScreenProperties.Left;
-
-            return OutOfScreenProperties.None;
-        }
-
         public void FillDataBoolWithRandomData(int startLine)
         {
             for (int x = startLine; x < lineSize; x++)

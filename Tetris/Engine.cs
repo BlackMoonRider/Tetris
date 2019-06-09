@@ -150,7 +150,7 @@ namespace Tetris
             if (Input.IsKeyDown(Keys.LEFT))
             {
                 CurrentShape.PositionColumn--;
-                if (currentGrid.CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Left)
+                if (CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Left)
                 {
                     RestorePositionAndRotation();
                 }
@@ -159,7 +159,7 @@ namespace Tetris
             if (Input.IsKeyDown(Keys.RIGHT))
             {
                 CurrentShape.PositionColumn++;
-                if (currentGrid.CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Right)
+                if (CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Right)
                 {
                     RestorePositionAndRotation();
                 }
@@ -169,24 +169,45 @@ namespace Tetris
             {
                 currentTetromino.SetNextRotation();
                 CurrentShape.Rotation = currentTetromino.GetCurrentRotation();
-                while (currentGrid.CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Left)
+                while (CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Left)
                 {
                     CurrentShape.PositionColumn++;
                 }
-                while (currentGrid.CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Right)
+                while (CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Right)
                 {
                     CurrentShape.PositionColumn--;
                 }
             }
         }
 
+        // Returns true if the current shape is out of the left or right side of the screen 
+        private OutOfScreenProperties CheckCurrentShapeOutOfScreenLeftRight()
+        {
+            if (CurrentShape.PositionColumn + CurrentShape.Rotation.GetLength(1) > Settings.ColumnNumber)
+                return OutOfScreenProperties.Right;
+            if (CurrentShape.PositionColumn < 0)
+                return OutOfScreenProperties.Left;
+
+            return OutOfScreenProperties.None;
+        }
+
         public void CheckFallingDownAgainstCanvas()
         {
-            if (currentGrid.CheckCurrentShapeOutOfScreenUpBottom())
+            if (CheckCurrentShapeOutOfScreenUpBottom())
             {
                 StopTimer();
                 RestorePositionAndRotation();
             }
+        }
+
+        // Returns true if the current shape is out of the up or bottom of the screen 
+        private bool CheckCurrentShapeOutOfScreenUpBottom()
+        {
+            if (CurrentShape.PositionLine + CurrentShape.Rotation.GetLength(0) + 1 > Settings.LineNumber ||
+                CurrentShape.PositionLine < 0)
+                return true;
+
+            return false;
         }
 
         public void FeedCurrentGridWithBoolData()
@@ -196,23 +217,38 @@ namespace Tetris
 
         public void CheckCollisionAgainstBoolData()
         {
-            if (currentGrid.CheckCurrentShapeCollision() && (Input.IsKeyDown(Keys.LEFT) || Input.IsKeyDown(Keys.RIGHT)))
+            if (CheckCurrentShapeCollision(currentGrid) && (Input.IsKeyDown(Keys.LEFT) || Input.IsKeyDown(Keys.RIGHT)))
             {
                 RestorePositionAndRotation();
             }
-            else if (currentGrid.CheckCurrentShapeCollision() && Input.IsKeyDown(Keys.UP))
+            else if (CheckCurrentShapeCollision(currentGrid) && Input.IsKeyDown(Keys.UP))
             {
                 //StopTimer();
                 RestorePositionAndRotation();
                 //CurrentShape.PositionLine--;
             }
-            else if (currentGrid.CheckCurrentShapeCollision())
+            else if (CheckCurrentShapeCollision(currentGrid))
             {
                 StopTimer();
                 RestorePositionAndRotation();
                 CurrentShape.PositionLine--;
             }
 
+        }
+
+        // Returns true if the current shape collides with the bool data
+        private bool CheckCurrentShapeCollision(Grid currentGrid)
+        {
+            bool result = false;
+
+            for (int line = 0; line < CurrentShape.Rotation.GetLength(0); line++)
+                for (int column = 0; column < CurrentShape.Rotation.GetLength(1); column++)
+                {
+                    if (CurrentShape.Rotation[line, column] && currentGrid.BoolData[line + CurrentShape.PositionLine, column + CurrentShape.PositionColumn])
+                        result = true;
+                }
+
+            return result;
         }
 
         public void UpdateBoolAndPixelData()
