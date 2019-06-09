@@ -42,11 +42,11 @@ namespace Tetris
         public void PutCurrentShapeOnBoolData()// This may crash if you press DOWN
         {
             PixelData.Clear();
-            for (int x = 0; x < CurrentShape.Rotation.GetLength(0); x++)
-                for (int y = 0; y < CurrentShape.Rotation.GetLength(1); y++)
+            for (int x = 0; x < Tetromino.CurrentTetrominoRotation.GetLength(0); x++)
+                for (int y = 0; y < Tetromino.CurrentTetrominoRotation.GetLength(1); y++)
                 {
-                    if (CurrentShape.Rotation[x, y])
-                        BoolData[x + CurrentShape.PositionLine, y + CurrentShape.PositionColumn] = true;
+                    if (Tetromino.CurrentTetrominoRotation[x, y])
+                        BoolData[x + Tetromino.CurrentTetrominoPositionLine, y + Tetromino.CurrentTetrominoPositionColumn] = true;
                 }
         }
 

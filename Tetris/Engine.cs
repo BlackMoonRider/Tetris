@@ -136,10 +136,9 @@ namespace Tetris
             }
 
             // Set current shape and it's position
-            CurrentShape.Rotation = currentTetromino.GetCurrentRotation();
-            CurrentShape.PositionLine = 0;
-            CurrentShape.PositionColumn = 4;
-            //CurrentShape.IsInTheAir = true;
+            Tetromino.CurrentTetrominoRotation = currentTetromino.GetCurrentRotation();
+            Tetromino.CurrentTetrominoPositionLine = 0;
+            Tetromino.CurrentTetrominoPositionColumn = 4;
         }
 
         public void PutCurrentTetrominoOnCurrentGrid()
@@ -156,20 +155,20 @@ namespace Tetris
 
         public void BackUpPositionAndRotation()
         {
-            backupPositionLine = CurrentShape.PositionLine;
-            backupPositionColumn = CurrentShape.PositionColumn;
-            backupRotation = (bool[,])CurrentShape.Rotation.Clone();
+            backupPositionLine = Tetromino.CurrentTetrominoPositionLine;
+            backupPositionColumn = Tetromino.CurrentTetrominoPositionColumn;
+            backupRotation = (bool[,])Tetromino.CurrentTetrominoRotation.Clone();
         }
         
         public void MoveCurrentShapeDown() // Refactor this to be single-responsible
         {
             BackUpPositionAndRotation();
 
-            CurrentShape.PositionLine++; //Сдвинуть вниз
+            Tetromino.CurrentTetrominoPositionLine++; //Сдвинуть вниз
 
             if (IsCurrentShapeBeyondCanvasBottom() || DoesCurrentShapeCollideWithData()) //Коллизия?
             {
-                CurrentShape.CanMoveDown = false; //Флаг
+                Tetromino.CurrentTetrominoCanMoveDown = false; //Флаг
                 RestorePositionAndRotation(); //Восстановить состояние
             }
         }
@@ -183,10 +182,9 @@ namespace Tetris
 
         public void RestorePositionAndRotation()
         {
-            CurrentShape.PositionLine = backupPositionLine;
-            CurrentShape.PositionColumn = backupPositionColumn;
-            CurrentShape.Rotation = (bool[,])backupRotation.Clone();
-            //backupRotation.CopyTo(CurrentShape.Rotation, 0);
+            Tetromino.CurrentTetrominoPositionLine = backupPositionLine;
+            Tetromino.CurrentTetrominoPositionColumn = backupPositionColumn;
+            Tetromino.CurrentTetrominoRotation = (bool[,])backupRotation.Clone();
         }
 
         public void PutResultOnPermanentGrid()
@@ -199,12 +197,12 @@ namespace Tetris
         {
             bool doesCollide = false;
 
-            for (int line = 0; line < CurrentShape.Rotation.GetLength(0); line++)
+            for (int line = 0; line < Tetromino.CurrentTetrominoRotation.GetLength(0); line++)
             {
-                for (int column = 0; column < CurrentShape.Rotation.GetLength(1); column++)
+                for (int column = 0; column < Tetromino.CurrentTetrominoRotation.GetLength(1); column++)
                 {
-                    if (CurrentShape.Rotation[line, column] && 
-                        currentGrid.BoolData[line + CurrentShape.PositionLine, column + CurrentShape.PositionColumn])
+                    if (Tetromino.CurrentTetrominoRotation[line, column] && 
+                        currentGrid.BoolData[line + Tetromino.CurrentTetrominoPositionLine, column + Tetromino.CurrentTetrominoPositionColumn])
                     {
                         doesCollide = true;
                         break;
@@ -220,7 +218,7 @@ namespace Tetris
         {
             bool isBeyond = false;
 
-            if (CurrentShape.PositionLine + CurrentShape.Rotation.GetLength(0) > Settings.LineNumber)
+            if (Tetromino.CurrentTetrominoPositionLine + Tetromino.CurrentTetrominoRotation.GetLength(0) > Settings.LineNumber)
                 isBeyond = true;
 
             return isBeyond;
@@ -232,7 +230,7 @@ namespace Tetris
 
             if (Input.IsKeyDown(Keys.LEFT))
             {
-                CurrentShape.PositionColumn--;
+                Tetromino.CurrentTetrominoPositionColumn--;
                 if (CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Left || DoesCurrentShapeCollideWithData())
                 {
                     RestorePositionAndRotation();
@@ -241,7 +239,7 @@ namespace Tetris
 
             else if (Input.IsKeyDown(Keys.RIGHT))
             {
-                CurrentShape.PositionColumn++;
+                Tetromino.CurrentTetrominoPositionColumn++;
                 if (CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Right || DoesCurrentShapeCollideWithData())
                 {
                     RestorePositionAndRotation();
@@ -251,7 +249,7 @@ namespace Tetris
             else if (Input.IsKeyDown(Keys.UP))
             {
                 currentTetromino.SetNextRotation();
-                CurrentShape.Rotation = currentTetromino.GetCurrentRotation();
+                Tetromino.CurrentTetrominoRotation = currentTetromino.GetCurrentRotation();
                 if (IsCurrentShapeBeyondCanvasBottom())
                 {
                     currentTetromino.SetPreviousRotation();
@@ -261,11 +259,11 @@ namespace Tetris
                 {
                     while (CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Left)
                     {
-                        CurrentShape.PositionColumn++;
+                        Tetromino.CurrentTetrominoPositionColumn++;
                     }
                     while (CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Right)
                     {
-                        CurrentShape.PositionColumn--;
+                        Tetromino.CurrentTetrominoPositionColumn--;
                     }
                     if (DoesCurrentShapeCollideWithData())
                     {
@@ -279,9 +277,9 @@ namespace Tetris
         // Returns true if the current shape is out of the left or right side of the screen 
         private OutOfScreenProperties CheckCurrentShapeOutOfScreenLeftRight()
         {
-            if (CurrentShape.PositionColumn + CurrentShape.Rotation.GetLength(1) > Settings.ColumnNumber)
+            if (Tetromino.CurrentTetrominoPositionColumn + Tetromino.CurrentTetrominoRotation.GetLength(1) > Settings.ColumnNumber)
                 return OutOfScreenProperties.Right;
-            if (CurrentShape.PositionColumn < 0)
+            if (Tetromino.CurrentTetrominoPositionColumn < 0)
                 return OutOfScreenProperties.Left;
 
             return OutOfScreenProperties.None;

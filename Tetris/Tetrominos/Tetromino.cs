@@ -13,6 +13,11 @@ namespace Tetris
         protected virtual bool[,] RotationC { get; }
         protected virtual bool[,] RotationD { get; }
 
+        static public int CurrentTetrominoPositionLine { get; set; }
+        static public int CurrentTetrominoPositionColumn { get; set; }
+        static public bool[,] CurrentTetrominoRotation { get; set; }
+        static public bool CurrentTetrominoCanMoveDown { get; set; }
+
         public Tetromino()
         {
             Rotations = new List<bool[,]> { RotationA, RotationB, RotationC, RotationD };
@@ -41,14 +46,5 @@ namespace Tetris
                 ? Rotations.Count - 1
                 : --CurrentRotation;
         }
-
-        //public bool[,] PeekNextRotation()
-        //{
-        //    int maybeRotation = currentRotation >= rotations.Count - 1
-        //        ? 0
-        //        : ++currentRotation;
-
-        //    return rotations[maybeRotation];
-        //}
     }
 }

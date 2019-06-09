@@ -45,7 +45,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CurrentShape.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="Grid.cs" />
     <Compile Include="Pixel.cs" />
