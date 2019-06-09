@@ -26,28 +26,26 @@ namespace Tetris
 
             engine.DrawBlackCanvas();
             engine.SetLevel();
-            engine.SetTimer();
 
             while (true)
             {
                 engine.SetCurrentTetromino();
-                engine.PutTetrominoOnCurrentGrid();
-                engine.StartTimer();
 
-                while (true)
+                CurrentShape.CanMoveDown = true;
+
+                if (engine.DoesCurrentShapeCollideWithData())
+                    Environment.Exit(0); // Turn this to Game Over
+
+                while (CurrentShape.CanMoveDown)
                 {
-                    engine.BackUpPositionAndRotation();
-
-                    engine.CheckKeyboardAgainstCanvas();
-                    engine.CheckFallingDownAgainstCanvas();
-
-                    engine.FeedCurrentGridWithBoolData();
-                    engine.CheckCollisionAgainstBoolData();
-                    engine.UpdateBoolAndPixelData();
+                    engine.CopyGridToCurrentGrid();
+                    engine.MoveCurrentShapeDown();
+                    engine.CheckKeyboardInputAgainstCanvasAndData();
+                    engine.PutCurrentTetrominoOnCurrentGrid();
                     engine.RedrawScreen();
-                    if (engine.UpdateGrid())
-                        break;
                 }
+
+                engine.PutResultOnPermanentGrid();
 
             }
 

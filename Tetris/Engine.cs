@@ -15,7 +15,6 @@ namespace Tetris
         Rectangle screen;
         Grid grid;
         Grid currentGrid;
-        System.Timers.Timer timer;
         Tetromino currentTetromino;
         int backupPositionLine;
         int backupPositionColumn;
@@ -56,24 +55,6 @@ namespace Tetris
         public void SetLevel() // TODO
         {
             grid.FillDataBoolWithRandomData(Settings.Level);
-        }
-
-        public void SetTimer()
-        {
-            timer = new System.Timers.Timer(400);
-            timer.Elapsed += (_, ___) => CurrentShape.PositionLine++;
-            //timer.Elapsed += (_, ___) =>
-            //{
-            //    BackUpPositionAndRotation();
-            //    CurrentShape.PositionLine++;
-            //    currentGrid.FeedWithBoolData(grid);
-            //    if (currentGrid.CheckCurrentShapeCollision())
-            //    {
-            //        StopTimer();
-            //        RestorePositionAndRotation();
-            //    }
-            //};
-            timer.AutoReset = true;
         }
 
         public void RedrawScreen()
@@ -126,16 +107,16 @@ namespace Tetris
             //CurrentShape.IsInTheAir = true;
         }
 
-        public void PutTetrominoOnCurrentGrid()
+        public void PutCurrentTetrominoOnCurrentGrid()
         {
-            currentGrid.FeedWithBoolData(grid); // Copy all the data from the permanent grid to the current grid
+            CopyGridToCurrentGrid(); // Copy all the data from the permanent grid to the current grid
             currentGrid.PutCurrentShapeOnBoolData(); // Put a shape on the current grid
             currentGrid.ConvertBoolDataToPixelData(); // Create an image to render
         }
 
-        public void StartTimer()
+        public void CopyGridToCurrentGrid()
         {
-            timer.Start();
+            currentGrid.FeedWithBoolData(grid);
         }
 
         public void BackUpPositionAndRotation()
@@ -144,38 +125,114 @@ namespace Tetris
             backupPositionColumn = CurrentShape.PositionColumn;
             backupRotation = (bool[,])CurrentShape.Rotation.Clone();
         }
-
-        public void CheckKeyboardAgainstCanvas()
+        
+        public void MoveCurrentShapeDown() // Refactor this to be single-responsible
         {
+            BackUpPositionAndRotation();
+
+            CurrentShape.PositionLine++; //Сдвинуть вниз
+
+            if (IsCurrentShapeBeyondCanvasBottom() || DoesCurrentShapeCollideWithData()) //Коллизия?
+            {
+                CurrentShape.CanMoveDown = false; //Флаг
+                RestorePositionAndRotation(); //Восстановить состояние
+            }
+        }
+
+        public void UpdateBoolAndPixelData()
+        {
+            currentGrid.PutCurrentShapeOnBoolData();
+            currentGrid.DropFullLines(); // This line belongs to this position. You move it - you break everything.
+            currentGrid.ConvertBoolDataToPixelData();
+        }
+
+        public void RestorePositionAndRotation()
+        {
+            CurrentShape.PositionLine = backupPositionLine;
+            CurrentShape.PositionColumn = backupPositionColumn;
+            CurrentShape.Rotation = (bool[,])backupRotation.Clone();
+            //backupRotation.CopyTo(CurrentShape.Rotation, 0);
+        }
+
+        public void PutResultOnPermanentGrid()
+        {
+            currentGrid.DropFullLines();
+            grid.FeedWithBoolData(currentGrid);
+        }
+
+        public bool DoesCurrentShapeCollideWithData()
+        {
+            bool doesCollide = false;
+
+            for (int line = 0; line < CurrentShape.Rotation.GetLength(0); line++)
+            {
+                for (int column = 0; column < CurrentShape.Rotation.GetLength(1); column++)
+                {
+                    if (CurrentShape.Rotation[line, column] && 
+                        currentGrid.BoolData[line + CurrentShape.PositionLine, column + CurrentShape.PositionColumn])
+                    {
+                        doesCollide = true;
+                        break;
+                    }
+
+                }
+            }
+
+            return doesCollide;
+        }
+
+        private bool IsCurrentShapeBeyondCanvasBottom()
+        {
+            bool isBeyond = false;
+
+            if (CurrentShape.PositionLine + CurrentShape.Rotation.GetLength(0) > Settings.LineNumber)
+                isBeyond = true;
+
+            return isBeyond;
+        }
+
+
+        public void CheckKeyboardInputAgainstCanvasAndData()
+        {
+            BackUpPositionAndRotation(); //Запомнить состояние
+
             if (Input.IsKeyDown(Keys.LEFT))
             {
                 CurrentShape.PositionColumn--;
-                if (CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Left)
+                if (CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Left || DoesCurrentShapeCollideWithData())
                 {
                     RestorePositionAndRotation();
                 }
             }
 
-            if (Input.IsKeyDown(Keys.RIGHT))
+            else if (Input.IsKeyDown(Keys.RIGHT))
             {
                 CurrentShape.PositionColumn++;
-                if (CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Right)
+                if (CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Right || DoesCurrentShapeCollideWithData())
                 {
                     RestorePositionAndRotation();
                 }
             }
 
-            if (Input.IsKeyDown(Keys.UP))
+            else if (Input.IsKeyDown(Keys.UP))
             {
                 currentTetromino.SetNextRotation();
                 CurrentShape.Rotation = currentTetromino.GetCurrentRotation();
-                while (CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Left)
+                if (DoesCurrentShapeCollideWithData() || IsCurrentShapeBeyondCanvasBottom())
                 {
-                    CurrentShape.PositionColumn++;
+                    currentTetromino.SetPreviousRotation();
+                    RestorePositionAndRotation();
                 }
-                while (CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Right)
+                else
                 {
-                    CurrentShape.PositionColumn--;
+                    while (CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Left)
+                    {
+                        CurrentShape.PositionColumn++;
+                    }
+                    while (CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Right)
+                    {
+                        CurrentShape.PositionColumn--;
+                    }
                 }
             }
         }
@@ -189,99 +246,6 @@ namespace Tetris
                 return OutOfScreenProperties.Left;
 
             return OutOfScreenProperties.None;
-        }
-
-        public void CheckFallingDownAgainstCanvas()
-        {
-            if (CheckCurrentShapeOutOfScreenUpBottom())
-            {
-                StopTimer();
-                RestorePositionAndRotation();
-            }
-        }
-
-        // Returns true if the current shape is out of the up or bottom of the screen 
-        private bool CheckCurrentShapeOutOfScreenUpBottom()
-        {
-            if (CurrentShape.PositionLine + CurrentShape.Rotation.GetLength(0) + 1 > Settings.LineNumber ||
-                CurrentShape.PositionLine < 0)
-                return true;
-
-            return false;
-        }
-
-        public void FeedCurrentGridWithBoolData()
-        {
-            currentGrid.FeedWithBoolData(grid);
-        }
-
-        public void CheckCollisionAgainstBoolData()
-        {
-            if (CheckCurrentShapeCollision(currentGrid) && (Input.IsKeyDown(Keys.LEFT) || Input.IsKeyDown(Keys.RIGHT)))
-            {
-                RestorePositionAndRotation();
-            }
-            else if (CheckCurrentShapeCollision(currentGrid) && Input.IsKeyDown(Keys.UP))
-            {
-                //StopTimer();
-                RestorePositionAndRotation();
-                //CurrentShape.PositionLine--;
-            }
-            else if (CheckCurrentShapeCollision(currentGrid))
-            {
-                StopTimer();
-                RestorePositionAndRotation();
-                CurrentShape.PositionLine--;
-            }
-
-        }
-
-        // Returns true if the current shape collides with the bool data
-        private bool CheckCurrentShapeCollision(Grid currentGrid)
-        {
-            bool result = false;
-
-            for (int line = 0; line < CurrentShape.Rotation.GetLength(0); line++)
-                for (int column = 0; column < CurrentShape.Rotation.GetLength(1); column++)
-                {
-                    if (CurrentShape.Rotation[line, column] && currentGrid.BoolData[line + CurrentShape.PositionLine, column + CurrentShape.PositionColumn])
-                        result = true;
-                }
-
-            return result;
-        }
-
-        public void UpdateBoolAndPixelData()
-        {
-            currentGrid.PutCurrentShapeOnBoolData();
-            currentGrid.DropFullLines(); // This line belongs to this position. You move it - you break everything.
-            currentGrid.ConvertBoolDataToPixelData();
-        }
-
-        public void StopTimer()
-        {
-            timer.Stop();
-        }
-
-        public void RestorePositionAndRotation()
-        {
-            CurrentShape.PositionLine = backupPositionLine;
-            CurrentShape.PositionColumn = backupPositionColumn;
-            CurrentShape.Rotation = (bool[,])backupRotation.Clone();
-            //backupRotation.CopyTo(CurrentShape.Rotation, 0);
-        }
-
-        public bool UpdateGrid()
-        {
-            bool gridHasBeenUpdated = false; 
-
-            if (timer.Enabled == false)
-            {
-                grid.FeedWithBoolData(currentGrid);
-                gridHasBeenUpdated = true;
-            }
-            return gridHasBeenUpdated;
-
         }
 
     }

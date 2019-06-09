@@ -35,6 +35,13 @@ namespace Tetris
                 : ++CurrentRotation;
         }
 
+        public void SetPreviousRotation()
+        {
+            CurrentRotation = CurrentRotation <= 0
+                ? Rotations.Count - 1
+                : --CurrentRotation;
+        }
+
         //public bool[,] PeekNextRotation()
         //{
         //    int maybeRotation = currentRotation >= rotations.Count - 1
