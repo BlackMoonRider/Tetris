@@ -21,5 +21,8 @@ namespace Tetris
         public const int PixelSizeY = 30;
 
         public static int Level = LineNumber - 12;
+
+        public static int HiScore = 0;
+        public static int CurrentScore = 0;
     }
 }

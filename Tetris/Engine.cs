@@ -31,6 +31,7 @@ namespace Tetris
         {
             grid = new Grid();
             currentGrid = new Grid();
+            ResetCurrentScore();
         }
 
         public void DrawTitileScreen()
@@ -42,7 +43,6 @@ namespace Tetris
                 consoleGraphics.DrawString(" PRESS SPACE TO START", "Consolas", 0xFFFFFF00, 230, 650, 20);
                 consoleGraphics.DrawString("LOGO BY FREEPNG.RU   EDUCATIONAL PROJECT ©2019", "Consolas", 0xFFFFFF00, 225, 750, 10);
                 ConsoleImage logo = consoleGraphics.LoadImage(@"logo.bmp");
-                System.Threading.Thread.Sleep(100);
                 consoleGraphics.DrawImage(logo, 255, 300);
                 consoleGraphics.FlipPages();
 
@@ -97,6 +97,10 @@ namespace Tetris
 
             foreach (Pixel pixel in currentGrid.PixelData)
                 pixel.Render(consoleGraphics);
+
+            consoleGraphics.DrawString($"   SCORE: {Settings.CurrentScore}", "Consolas", 0xFFFFFF00, 230, 680, 20);
+            consoleGraphics.DrawString($"HI-SCORE: {Settings.HiScore}", "Consolas", 0xFFFFFF00, 230, 710, 20);
+
             consoleGraphics.FlipPages();
             System.Threading.Thread.Sleep(100);
         }   
@@ -222,7 +226,6 @@ namespace Tetris
             return isBeyond;
         }
 
-
         public void CheckKeyboardInputAgainstCanvasAndData()
         {
             BackUpPositionAndRotation(); //Запомнить состояние
@@ -279,5 +282,9 @@ namespace Tetris
             return OutOfScreenProperties.None;
         }
 
+        private void ResetCurrentScore()
+        {
+            Settings.CurrentScore = 0;
+        }
     }
 }
