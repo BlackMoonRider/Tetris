@@ -49,6 +49,15 @@ namespace Tetris
             return rotations[currentRotation];
         }
 
+        public bool[,] PeekNextRotation()
+        {
+            int maybeRotation = currentRotation >= rotations.Count - 1
+                ? 0
+                : ++currentRotation;
+
+            return rotations[maybeRotation];
+        }
+
         public void SetNextRotation()
         {
             currentRotation = currentRotation >= rotations.Count - 1

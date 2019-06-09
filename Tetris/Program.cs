@@ -38,8 +38,10 @@ namespace Tetris
 
                 while (true)
                 {
+                    engine.BackUpPositionAndRotation();
                     engine.CheckKeyboard();
-                    engine.CheckCollision();
+                    engine.CheckCollisionDown();
+                    engine.UpdateBoolAndPixelData();
                     engine.RedrawScreen();
                     if (engine.UpdateGrid())
                         break;

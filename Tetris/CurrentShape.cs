@@ -11,6 +11,6 @@ namespace Tetris
         static public int PositionLine { get; set; }
         static public int PositionColumn { get; set; }
         static public bool[,] Rotation { get; set; }
-        static public bool IsInTheAir { get; set; }
+        static public bool CanMoveDown { get; set; }
     }
 }

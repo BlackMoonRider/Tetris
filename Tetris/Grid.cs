@@ -39,7 +39,7 @@ namespace Tetris
             BoolData = newBoolData;
         }
         
-        public void PutCurrentShapeOnBoolData()
+        public void PutCurrentShapeOnBoolData()// This may crash if you press DOWN
         {
             PixelData.Clear();
             for (int x = 0; x < CurrentShape.Rotation.GetLength(0); x++)
@@ -62,14 +62,14 @@ namespace Tetris
         }
 
         // Returns true if the current shape collides with the bool data
-        public bool CheckCurrentShapeCollision()
+        public bool CheckCurrentShapeCollision() // REWRITE THIS SHIT!
         {
             bool result = false;
 
-            for (int x = 0; x < CurrentShape.Rotation.GetLength(0); x++)
-                for (int y = 0; y < CurrentShape.Rotation.GetLength(1); y++)
+            for (int line = 0; line < CurrentShape.Rotation.GetLength(0); line++)
+                for (int column = 0; column < CurrentShape.Rotation.GetLength(1); column++)
                 {
-                    if (CurrentShape.Rotation[x, y] && BoolData[x + CurrentShape.PositionLine, y + CurrentShape.PositionColumn])
+                    if (CurrentShape.Rotation[line, column] && BoolData[line + CurrentShape.PositionLine + 0, column + CurrentShape.PositionColumn])
                         result = true;
                 }
 
@@ -79,7 +79,8 @@ namespace Tetris
         // Returns true if the current shape is out of the up or bottom of the screen 
         public bool CheckCurrentShapeOutOfScreenUpBottom()
         {
-            if (CurrentShape.PositionLine + CurrentShape.Rotation.GetLength(0) >= lineSize ||
+            int tmp = CurrentShape.Rotation.GetLength(0);
+            if (CurrentShape.PositionLine + CurrentShape.Rotation.GetLength(0) + 1 > lineSize ||
                 CurrentShape.PositionLine < 0)
                 return true;
 
@@ -87,21 +88,12 @@ namespace Tetris
         }
 
         // Returns true if the current shape is out of the left or right side of the screen 
-        //public bool CheckCurrentShapeOutOfScreenLeftRight()
-        //{
-        //    if (CurrentShape.PositionColumn + CurrentShape.Rotation.GetLength(1) >= columnSize ||
-        //        CurrentShape.PositionColumn <= 0)
-        //        return true;
-
-        //    return false;
-        //}
-
         public OutOfScreenProperties CheckCurrentShapeOutOfScreenLeftRight()
         {
-            if (CurrentShape.PositionColumn + CurrentShape.Rotation.GetLength(1) >= columnSize)
-                return OutOfScreenProperties.Left;
-            if (CurrentShape.PositionColumn <= 0)
+            if (CurrentShape.PositionColumn + CurrentShape.Rotation.GetLength(1) > columnSize)
                 return OutOfScreenProperties.Right;
+            if (CurrentShape.PositionColumn < 0)
+                return OutOfScreenProperties.Left;
 
             return OutOfScreenProperties.None;
         }
