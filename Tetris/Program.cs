@@ -24,8 +24,6 @@ namespace Tetris
 
             engine.DrawTitileScreen();
 
-            Console.ReadKey();
-
             engine.DrawBlackCanvas();
             engine.SetLevel();
             engine.SetTimer();

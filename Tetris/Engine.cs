@@ -31,15 +31,20 @@ namespace Tetris
 
         public void DrawTitileScreen()
         {
-            
-            canvas.Render(consoleGraphics);
-            consoleGraphics.DrawString("TETЯIS", "Times New Roman", 0xFFFFFF00, 150, 80, 100);
-            consoleGraphics.DrawString("PRESS ANY KEY TO START", "Consolas", 0xFFFFFF00, 230, 650, 20);
-            consoleGraphics.DrawString("LOGO BY FREEPNG.RU   EDUCATIONAL PROJECT ©2019", "Consolas", 0xFFFFFF00, 225, 750, 10);
-            ConsoleImage logo = consoleGraphics.LoadImage(@"logo.bmp");
-            System.Threading.Thread.Sleep(100);
-            consoleGraphics.DrawImage(logo, 255, 300);
-            consoleGraphics.FlipPages();
+            while (true)
+            {
+                canvas.Render(consoleGraphics);
+                consoleGraphics.DrawString("TETЯIS", "Times New Roman", 0xFFFFFF00, 150, 80, 100);
+                consoleGraphics.DrawString(" PRESS SPACE TO START", "Consolas", 0xFFFFFF00, 230, 650, 20);
+                consoleGraphics.DrawString("LOGO BY FREEPNG.RU   EDUCATIONAL PROJECT ©2019", "Consolas", 0xFFFFFF00, 225, 750, 10);
+                ConsoleImage logo = consoleGraphics.LoadImage(@"logo.bmp");
+                System.Threading.Thread.Sleep(100);
+                consoleGraphics.DrawImage(logo, 255, 300);
+                consoleGraphics.FlipPages();
+
+                if (Input.IsKeyDown(Keys.SPACE))
+                    break;
+            }
         }
 
         public void DrawBlackCanvas()
