@@ -85,7 +85,7 @@ namespace Tetris
 
         public void SetLevel() // TODO
         {
-            grid.FillDataBoolWithRandomData(Settings.Level);
+            grid.FillBoolDataWithRandomData(Settings.Level);
         }
 
         public void RedrawScreen()

@@ -15,11 +15,12 @@ namespace Tetris
         public int Width { get; set; }
         public int Height { get; set; }
 
-        private int shrinkWidth = 2;
-        private int shrinkHeight = 2;
-        private uint secondaryColor = 0xFFFF0000;
+        private const int shrinkWidth = 2;
+        private const int shrinkHeight = 2;
+        private const uint primaryColor = 0xFFFFFFFF;
+        private const uint secondaryColor = 0xFFFF0000;
 
-        public Pixel(int x, int y, int width = Settings.PixelSizeX, int height = Settings.PixelSizeY, uint color = 0xFFFFFFFF)
+        public Pixel(int x, int y, int width = Settings.PixelSizeX, int height = Settings.PixelSizeY, uint color = primaryColor)
         {
             PositionColumn = x * width;
             PositionLine = y * height;
