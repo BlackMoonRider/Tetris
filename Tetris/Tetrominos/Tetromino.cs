@@ -13,6 +13,9 @@ namespace Tetris
         protected virtual bool[,] RotationC { get; }
         protected virtual bool[,] RotationD { get; }
 
+        protected List<bool[,]> Rotations { get; set; }
+        protected int CurrentRotation { get; set; }
+
         static public int CurrentTetrominoPositionLine { get; set; }
         static public int CurrentTetrominoPositionColumn { get; set; }
         static public bool[,] CurrentTetrominoRotation { get; set; }
@@ -23,10 +26,6 @@ namespace Tetris
             Rotations = new List<bool[,]> { RotationA, RotationB, RotationC, RotationD };
             CurrentRotation = Utility.Random.Next(4);
         }
-
-        protected List<bool[,]> Rotations { get; set; }
-
-        protected int CurrentRotation { get; set; }
 
         public bool[,] GetCurrentRotation()
         {
