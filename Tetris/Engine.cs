@@ -53,19 +53,6 @@ namespace Tetris
             canvas.Render(consoleGraphics);
         }
 
-        public void RedrawScreen()
-        {
-            canvas = new Rectangle(Settings.canvasOffsetX + 0, Settings.canvasOffsetY + 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, 0xFF000000);
-            screen = new Rectangle(Settings.canvasOffsetX + 0, Settings.canvasOffsetY + 0, Grid.columnSize * Settings.PixelSizeY, Grid.lineSize * Settings.PixelSizeX, 0xFF262626);
-            canvas.Render(consoleGraphics);
-            screen.Render(consoleGraphics);
-
-            foreach (Pixel pixel in currentGrid.PixelData)
-                pixel.Render(consoleGraphics);
-            consoleGraphics.FlipPages();
-            System.Threading.Thread.Sleep(100);
-        }   
-
         public void SetLevel() // TODO
         {
             grid.FillDataBoolWithRandomData(Settings.Level);
@@ -89,20 +76,18 @@ namespace Tetris
             timer.AutoReset = true;
         }
 
-        public void PlayOneFrame()
+        public void RedrawScreen()
         {
-            
-        }
+            canvas = new Rectangle(Settings.canvasOffsetX + 0, Settings.canvasOffsetY + 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, 0xFF000000);
+            screen = new Rectangle(Settings.canvasOffsetX + 0, Settings.canvasOffsetY + 0, Grid.columnSize * Settings.PixelSizeY, Grid.lineSize * Settings.PixelSizeX, 0xFF262626);
+            canvas.Render(consoleGraphics);
+            screen.Render(consoleGraphics);
 
-        public void StartTimer()
-        {
-            timer.Start();
-        }
-
-        public void StopTimer()
-        {
-            timer.Stop();
-        }
+            foreach (Pixel pixel in currentGrid.PixelData)
+                pixel.Render(consoleGraphics);
+            consoleGraphics.FlipPages();
+            System.Threading.Thread.Sleep(100);
+        }   
 
         public void SetCurrentTetromino()
         {
@@ -143,9 +128,21 @@ namespace Tetris
 
         public void PutTetrominoOnCurrentGrid()
         {
-            currentGrid.FeedWithBoolData(grid);
-            currentGrid.PutCurrentShapeOnBoolData();
-            currentGrid.ConvertBoolDataToPixelData();
+            currentGrid.FeedWithBoolData(grid); // Copy all the data from the permanent grid to the current grid
+            currentGrid.PutCurrentShapeOnBoolData(); // Put a shape on the current grid
+            currentGrid.ConvertBoolDataToPixelData(); // Create an image to render
+        }
+
+        public void StartTimer()
+        {
+            timer.Start();
+        }
+
+        public void BackUpPositionAndRotation()
+        {
+            backupPositionLine = CurrentShape.PositionLine;
+            backupPositionColumn = CurrentShape.PositionColumn;
+            backupRotation = (bool[,])CurrentShape.Rotation.Clone();
         }
 
         public void CheckKeyboardAgainstCanvas()
@@ -192,6 +189,11 @@ namespace Tetris
             }
         }
 
+        public void FeedCurrentGridWithBoolData()
+        {
+            currentGrid.FeedWithBoolData(grid);
+        }
+
         public void CheckCollisionAgainstBoolData()
         {
             if (currentGrid.CheckCurrentShapeCollision() && (Input.IsKeyDown(Keys.LEFT) || Input.IsKeyDown(Keys.RIGHT)))
@@ -213,11 +215,16 @@ namespace Tetris
 
         }
 
-        public void BackUpPositionAndRotation()
+        public void UpdateBoolAndPixelData()
         {
-            backupPositionLine = CurrentShape.PositionLine;
-            backupPositionColumn = CurrentShape.PositionColumn;
-            backupRotation = (bool[,])CurrentShape.Rotation.Clone();
+            currentGrid.PutCurrentShapeOnBoolData();
+            currentGrid.DropFullLines(); // This line belongs to this position. You move it - you break everything.
+            currentGrid.ConvertBoolDataToPixelData();
+        }
+
+        public void StopTimer()
+        {
+            timer.Stop();
         }
 
         public void RestorePositionAndRotation()
@@ -226,18 +233,6 @@ namespace Tetris
             CurrentShape.PositionColumn = backupPositionColumn;
             CurrentShape.Rotation = (bool[,])backupRotation.Clone();
             //backupRotation.CopyTo(CurrentShape.Rotation, 0);
-        }
-
-        public void FeedCurrentGridWithBoolData()
-        {
-            currentGrid.FeedWithBoolData(grid);
-        }
-
-        public void UpdateBoolAndPixelData()
-        {
-            currentGrid.PutCurrentShapeOnBoolData();
-            currentGrid.DropFullLines(); // This line belongs to this position. You move it - you break everything.
-            currentGrid.ConvertBoolDataToPixelData();
         }
 
         public bool UpdateGrid()
@@ -252,5 +247,6 @@ namespace Tetris
             return gridHasBeenUpdated;
 
         }
+
     }
 }
