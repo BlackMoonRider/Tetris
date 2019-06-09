@@ -43,8 +43,8 @@ namespace Tetris
                 {
 
                     engine.CopyGridToCurrentGrid();
-                    engine.MoveCurrentShapeDown();
                     engine.CheckKeyboardInputAgainstCanvasAndData();
+                    engine.MoveCurrentShapeDown();
                     engine.PutCurrentTetrominoOnCurrentGrid();
                     engine.RedrawScreen();
                 }
