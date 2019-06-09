@@ -16,7 +16,7 @@ namespace Tetris
         Grid grid;
         Grid currentGrid;
         System.Timers.Timer timer;
-        ITetromino currentTetromino;
+        Tetromino currentTetromino;
         int backupPositionLine;
         int backupPositionColumn;
         bool[,] backupRotation;
@@ -99,10 +99,35 @@ namespace Tetris
             timer.Stop();
         }
 
-        public void SetCurrentTetromino() // Turn to Factory
+        public void SetCurrentTetromino()
         {
             // Create shape
-            currentTetromino = new TetrominoT();
+            int nextShape = Utility.Random.Next(7);
+
+            switch (nextShape)
+            {
+                case 1:
+                    currentTetromino = new TetrominoT();
+                    break;
+                case 2:
+                    currentTetromino = new TetrominoI();
+                    break;
+                case 3:
+                    currentTetromino = new TetrominoJ();
+                    break;
+                case 4:
+                    currentTetromino = new TetrominoL();
+                    break;
+                case 5:
+                    currentTetromino = new TetrominoS();
+                    break;
+                case 6:
+                    currentTetromino = new TetrominoZ();
+                    break;
+                default:
+                    currentTetromino = new TetrominoO();
+                    break;
+            }
 
             // Set current shape and it's position
             CurrentShape.Rotation = currentTetromino.GetCurrentRotation();

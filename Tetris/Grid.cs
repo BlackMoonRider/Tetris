@@ -62,14 +62,14 @@ namespace Tetris
         }
 
         // Returns true if the current shape collides with the bool data
-        public bool CheckCurrentShapeCollision() // REWRITE THIS SHIT!
+        public bool CheckCurrentShapeCollision()
         {
             bool result = false;
 
             for (int line = 0; line < CurrentShape.Rotation.GetLength(0); line++)
                 for (int column = 0; column < CurrentShape.Rotation.GetLength(1); column++)
                 {
-                    if (CurrentShape.Rotation[line, column] && BoolData[line + CurrentShape.PositionLine + 0, column + CurrentShape.PositionColumn])
+                    if (CurrentShape.Rotation[line, column] && BoolData[line + CurrentShape.PositionLine, column + CurrentShape.PositionColumn])
                         result = true;
                 }
 
