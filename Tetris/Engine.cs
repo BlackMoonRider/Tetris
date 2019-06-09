@@ -252,7 +252,7 @@ namespace Tetris
             {
                 currentTetromino.SetNextRotation();
                 CurrentShape.Rotation = currentTetromino.GetCurrentRotation();
-                if (DoesCurrentShapeCollideWithData() || IsCurrentShapeBeyondCanvasBottom())
+                if (IsCurrentShapeBeyondCanvasBottom())
                 {
                     currentTetromino.SetPreviousRotation();
                     RestorePositionAndRotation();
@@ -266,6 +266,11 @@ namespace Tetris
                     while (CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Right)
                     {
                         CurrentShape.PositionColumn--;
+                    }
+                    if (DoesCurrentShapeCollideWithData())
+                    {
+                        currentTetromino.SetPreviousRotation();
+                        RestorePositionAndRotation();
                     }
                 }
             }
