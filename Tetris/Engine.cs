@@ -70,6 +70,7 @@ namespace Tetris
                 {
                     restartGame = true;
                     GameReset();
+                    DrawBlackCanvas();
                 }
             }
 
