@@ -108,10 +108,10 @@ namespace Tetris
 
             // This adds an extra line with only one gap to test the DropFullLines() method
 
-            for (int y = 0; y < columnSize; y++)
-                BoolData[startLine - 1, y] = true;
+            //for (int y = 0; y < columnSize; y++)
+            //    BoolData[startLine - 1, y] = true;
 
-            BoolData[startLine - 1, 4] = false;
+            //BoolData[startLine - 1, 4] = false;
         }
 
         public void DropFullLines() // Make this immutable (as well as the other methods)
