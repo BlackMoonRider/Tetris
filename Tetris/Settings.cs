@@ -20,6 +20,6 @@ namespace Tetris
         public const int PixelSizeX = 30;
         public const int PixelSizeY = 30;
 
-        public static int Level = LineNumber - 0;
+        public static int Level = LineNumber - 12;
     }
 }

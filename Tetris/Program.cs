@@ -34,10 +34,14 @@ namespace Tetris
                 CurrentShape.CanMoveDown = true;
 
                 if (engine.DoesCurrentShapeCollideWithData())
-                    Environment.Exit(0); // Turn this to Game Over
+                {
+                    if (engine.DrawGameOverScreen())
+                        continue;
+                }
 
                 while (CurrentShape.CanMoveDown)
                 {
+
                     engine.CopyGridToCurrentGrid();
                     engine.MoveCurrentShapeDown();
                     engine.CheckKeyboardInputAgainstCanvasAndData();
