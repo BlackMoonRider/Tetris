@@ -24,8 +24,13 @@ namespace Tetris
         {
             this.consoleGraphics = consoleGraphics;
             this.canvas = new Rectangle(0, 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, 0xFFFF0000);
-            this.grid = new Grid();
-            this.currentGrid = new Grid();
+            GameReset();
+        }
+
+        private void GameReset()
+        {
+            grid = new Grid();
+            currentGrid = new Grid();
         }
 
         public void DrawTitileScreen()
@@ -44,6 +49,32 @@ namespace Tetris
                 if (Input.IsKeyDown(Keys.SPACE))
                     break;
             }
+        }
+
+        public bool DrawGameOverScreen()
+        {
+            bool restartGame = false;
+
+            while (!restartGame)
+            {
+                canvas = new Rectangle(0, 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, 0x26262626);
+                canvas.Render(consoleGraphics);
+                consoleGraphics.DrawString("GAME\r\nOVER", "Consolas", 0xFFFFFF00, 230, 80, 100);
+                consoleGraphics.DrawString("PRESS SPACE TO RESTART", "Consolas", 0xFFFFFF00, 230, 650, 20);
+                consoleGraphics.DrawString("PRESS ESC TO EXIT GAME", "Consolas", 0xFFFFFF00, 230, 680, 20);
+                consoleGraphics.FlipPages();
+
+                if (Input.IsKeyDown(Keys.ESCAPE))
+                    Environment.Exit(0);
+                if (Input.IsKeyDown(Keys.SPACE))
+                {
+                    restartGame = true;
+                    GameReset();
+                    DrawBlackCanvas();
+                }
+            }
+
+            return restartGame;
         }
 
         public void DrawBlackCanvas()
