@@ -49,7 +49,6 @@ namespace Tetris
 
         public void ConvertBoolDataToPixelData()
         {
-            //PixelData = new List<Pixel>();
             for (int x = 0; x < Settings.LineNumber; x++)
                 for (int y = 0; y < Settings.ColumnNumber; y++)
                 {
