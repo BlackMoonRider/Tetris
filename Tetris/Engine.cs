@@ -118,7 +118,7 @@ namespace Tetris
             currentGrid.ConvertBoolDataToPixelData();
         }
 
-        public void CheckKeyboard()
+        public void CheckKeyboardAgainstCanvas()
         {
             if (Input.IsKeyDown(Keys.LEFT))
             {
@@ -153,38 +153,54 @@ namespace Tetris
             }
         }
 
-        public void BackUpPositionAndRotation()
+        public void CheckFallingDownAgainstCanvas()
         {
-            backupPositionLine = CurrentShape.PositionLine;
-            backupPositionColumn = CurrentShape.PositionColumn;
-            //CurrentShape.Rotation.CopyTo(backupRotation, 0);
+            if (currentGrid.CheckCurrentShapeOutOfScreenUpBottom())
+            {
+                StopTimer();
+                RestorePositionAndRotation();
+            }
         }
 
-        public void RestorePositionAndRotation()
+        public void CheckCollisionAgainstBoolData()
         {
-            CurrentShape.PositionLine = backupPositionLine;
-            CurrentShape.PositionColumn = backupPositionColumn;
-            //backupRotation.CopyTo(CurrentShape.Rotation, 0);
-        }
-
-        public void CheckCollisionDown() // REWRITE THIS SHIT!
-        {
-
-            currentGrid.FeedWithBoolData(grid);
-
-            if (currentGrid.CheckCurrentShapeCollision())
+            if (currentGrid.CheckCurrentShapeCollision() && (Input.IsKeyDown(Keys.LEFT) || Input.IsKeyDown(Keys.RIGHT)))
+            {
+                RestorePositionAndRotation();
+            }
+            else if (currentGrid.CheckCurrentShapeCollision() && Input.IsKeyDown(Keys.UP))
+            {
+                //StopTimer();
+                RestorePositionAndRotation();
+                //CurrentShape.PositionLine--;
+            }
+            else if (currentGrid.CheckCurrentShapeCollision())
             {
                 StopTimer();
                 RestorePositionAndRotation();
                 CurrentShape.PositionLine--;
             }
 
-            if (currentGrid.CheckCurrentShapeOutOfScreenUpBottom())
-            {
-                StopTimer();
-                RestorePositionAndRotation();
-                //CurrentShape.PositionLine--; // Refactor
-            }
+        }
+
+        public void BackUpPositionAndRotation()
+        {
+            backupPositionLine = CurrentShape.PositionLine;
+            backupPositionColumn = CurrentShape.PositionColumn;
+            backupRotation = (bool[,])CurrentShape.Rotation.Clone();
+        }
+
+        public void RestorePositionAndRotation()
+        {
+            CurrentShape.PositionLine = backupPositionLine;
+            CurrentShape.PositionColumn = backupPositionColumn;
+            CurrentShape.Rotation = (bool[,])backupRotation.Clone();
+            //backupRotation.CopyTo(CurrentShape.Rotation, 0);
+        }
+
+        public void FeedCurrentGridWithBoolData()
+        {
+            currentGrid.FeedWithBoolData(grid);
         }
 
         public void UpdateBoolAndPixelData()

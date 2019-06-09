@@ -79,7 +79,6 @@ namespace Tetris
         // Returns true if the current shape is out of the up or bottom of the screen 
         public bool CheckCurrentShapeOutOfScreenUpBottom()
         {
-            int tmp = CurrentShape.Rotation.GetLength(0);
             if (CurrentShape.PositionLine + CurrentShape.Rotation.GetLength(0) + 1 > lineSize ||
                 CurrentShape.PositionLine < 0)
                 return true;
