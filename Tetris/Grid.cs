@@ -106,6 +106,7 @@ namespace Tetris
             }
 
             int emptyLinesToAdd = BoolData.GetLength(0) - linesToKeep.Count;
+            UpdateScores(emptyLinesToAdd);
 
             bool[,] newBoolData = new bool[lineSize, columnSize];
 
@@ -118,6 +119,14 @@ namespace Tetris
             for (int x = 0; x < lineSize; x++)
                 for (int y = 0; y < columnSize; y++)
                     BoolData[x, y] = newBoolData[x, y];
+        }
+
+        private void UpdateScores(int emptyLinesToAdd)
+        {
+            int pointsToAdd = emptyLinesToAdd * 100;
+            Settings.CurrentScore += pointsToAdd;
+            if (Settings.CurrentScore > Settings.HiScore)
+                Settings.HiScore = Settings.CurrentScore;
         }
     }
 }
