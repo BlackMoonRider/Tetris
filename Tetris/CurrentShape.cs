@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Tetris
 {
-    static class CurrentShape
+    static class CurrentShape // Move these static properties to the abstract Tetromino class
     {
         static public int PositionLine { get; set; }
         static public int PositionColumn { get; set; }

@@ -71,6 +71,7 @@ namespace Tetris
                 }
 
             // This adds an extra line with only one gap to test the DropFullLines() method
+            // This is for debug purposes
 
             //for (int y = 0; y < columnSize; y++)
             //    BoolData[startLine - 1, y] = true;
