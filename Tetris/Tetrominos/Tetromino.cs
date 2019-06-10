@@ -13,7 +13,7 @@ namespace Tetris
         protected virtual bool[,] RotationC { get; }
         protected virtual bool[,] RotationD { get; }
 
-        protected List<bool[,]> Rotations { get; set; }
+        protected List<bool[,]> Rotations { get; }
         protected int CurrentRotation { get; set; }
 
         static public int CurrentTetrominoPositionLine { get; set; }

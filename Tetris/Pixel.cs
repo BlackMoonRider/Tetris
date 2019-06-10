@@ -9,11 +9,11 @@ namespace Tetris
 {
     class Pixel
     {
-        public int PositionLine { get; set; }
-        public int PositionColumn { get; set; }
-        public uint Color { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
+        public int PositionLine { get; }
+        public int PositionColumn { get; }
+        public uint Color { get; }
+        public int Width { get; }
+        public int Height { get; }
 
         private const int shrinkWidth = 2;
         private const int shrinkHeight = 2;

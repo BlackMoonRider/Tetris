@@ -173,13 +173,6 @@ namespace Tetris
             }
         }
 
-        public void UpdateBoolAndPixelData()
-        {
-            currentGrid.PutCurrentShapeOnBoolData();
-            currentGrid.DropFullLines(); // This line belongs to this position. You move it - you break everything.
-            currentGrid.ConvertBoolDataToPixelData();
-        }
-
         public void RestorePositionAndRotation()
         {
             Tetromino.CurrentTetrominoPositionLine = backupPositionLine;
