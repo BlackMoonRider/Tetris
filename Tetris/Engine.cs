@@ -119,11 +119,13 @@ namespace Tetris
                 canvas.Render(consoleGraphics);
                 consoleGraphics.DrawString("GAME SETTINGS", "Consolas", 0xFFFFFF00, 150, 70, 50);
                 consoleGraphics.DrawString($"LEVEL: {Settings.LevelSelector}", "Consolas", 0xFFFFFF00, 250, cursorStart, 30);
-                consoleGraphics.DrawString($"SHAPES:", "Consolas", 0xFFFFFF00, 250, cursorStart + cursorOffset, 30);
-                consoleGraphics.DrawString("GAME SETTINGS", "Consolas", 0xFFFFFF00, 250, cursorStart + cursorOffset * 2, 30);
+                consoleGraphics.DrawString($"SPEED: {Settings.SpeedSelector}", "Consolas", 0xFFFFFF00, 250, cursorStart + cursorOffset, 30);
+                consoleGraphics.DrawString($"SHAPES:", "Consolas", 0xFFFFFF00, 250, cursorStart + cursorOffset * 2, 30);
                 PlaceCursor();
-                consoleGraphics.DrawString("PRESS ENTER TO ADJUST SETTINGS", "Consolas", 0xFFFFFF00, 230, 650, 20);
-                consoleGraphics.DrawString("PRESS SPACE TO START GAME", "Consolas", 0xFFFFFF00, 230, 680, 20);
+                consoleGraphics.DrawString("PRESS UP OR DOWN TO NAVIGATE", "Consolas", 0xFFFFFF00, 150, 620, 20);
+                consoleGraphics.DrawString("PRESS ENTER TO CHANGE SETTINGS", "Consolas", 0xFFFFFF00, 150, 650, 20);
+                consoleGraphics.DrawString("PRESS SPACE TO START GAME", "Consolas", 0xFFFFFF00, 150, 680, 20);
+                consoleGraphics.DrawString("PRESS ESC TO EXIT GAME", "Consolas", 0xFFFFFF00, 150, 710, 20);
                 consoleGraphics.FlipPages();
 
                 if (Input.IsKeyDown(Keys.SPACE))
@@ -132,6 +134,10 @@ namespace Tetris
                     MoveCursorDown();
                 if (Input.IsKeyDown(Keys.UP))
                     MoveCursorUp();
+                if (Input.IsKeyDown(Keys.RETURN))
+                    ChangeSettings();
+                if (Input.IsKeyDown(Keys.ESCAPE))
+                    Environment.Exit(0);
             }
 
             void PlaceCursor()
@@ -153,6 +159,27 @@ namespace Tetris
                     ? cursorPosition = cursorStart + (cursorOffset * 2)
                     : cursorPosition - cursorOffset;
                 Thread.Sleep(100);
+            }
+
+            void ChangeSettings()
+            {
+                if (cursorPosition == cursorStart + (cursorOffset * 0))
+                {
+                    if (Settings.LevelSelector >= 12)
+                        Settings.LevelSelector = 0;
+                    else
+                        Settings.LevelSelector++;
+                }
+
+                else if (cursorPosition == cursorStart + (cursorOffset * 1))
+                {
+                    if (Settings.SpeedSelector >= 9)
+                        Settings.SpeedSelector = 0;
+                    else
+                        Settings.SpeedSelector++;
+                }
+
+                Thread.Sleep(30);
             }
         }
 
