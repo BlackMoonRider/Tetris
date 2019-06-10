@@ -46,7 +46,7 @@ namespace Tetris
                     engine.CheckKeyboardInputAgainstCanvasAndData();
                     engine.MoveCurrentShapeDown();
                     engine.PutCurrentTetrominoOnCurrentGrid();
-                    engine.RedrawScreen();
+                    engine.RedrawInGameScreen();
                 }
 
                 engine.PutResultOnPermanentGrid();

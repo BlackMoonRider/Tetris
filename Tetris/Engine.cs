@@ -88,7 +88,7 @@ namespace Tetris
             grid.FillBoolDataWithRandomData(Settings.Level);
         }
 
-        public void RedrawScreen()
+        public void RedrawInGameScreen()
         {
             canvas = new Rectangle(Settings.canvasOffsetX + 0, Settings.canvasOffsetY + 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, 0xFF000000);
             screen = new Rectangle(Settings.canvasOffsetX + 0, Settings.canvasOffsetY + 0, Settings.ColumnNumber * Settings.PixelSizeY, Settings.LineNumber * Settings.PixelSizeX, 0xFF262626);
@@ -107,7 +107,6 @@ namespace Tetris
 
         public void SetCurrentTetromino()
         {
-            // Create shape
             int nextShape = Utility.Random.Next(7);
 
             switch (nextShape)
@@ -135,7 +134,6 @@ namespace Tetris
                     break;
             }
 
-            // Set current shape and it's position
             Tetromino.CurrentTetrominoRotation = currentTetromino.GetCurrentRotation();
             Tetromino.CurrentTetrominoPositionLine = 0;
             Tetromino.CurrentTetrominoPositionColumn = 4;
@@ -143,9 +141,9 @@ namespace Tetris
 
         public void PutCurrentTetrominoOnCurrentGrid()
         {
-            CopyGridToCurrentGrid(); // Copy all the data from the permanent grid to the current grid
-            currentGrid.PutCurrentShapeOnBoolData(); // Put a shape on the current grid
-            currentGrid.ConvertBoolDataToPixelData(); // Create an image to render
+            CopyGridToCurrentGrid(); 
+            currentGrid.PutCurrentShapeOnBoolData(); 
+            currentGrid.ConvertBoolDataToPixelData();
         }
 
         public void CopyGridToCurrentGrid()
@@ -160,16 +158,16 @@ namespace Tetris
             backupRotation = (bool[,])Tetromino.CurrentTetrominoRotation.Clone();
         }
         
-        public void MoveCurrentShapeDown() // Refactor this to be single-responsible
+        public void MoveCurrentShapeDown() 
         {
             BackUpPositionAndRotation();
 
-            Tetromino.CurrentTetrominoPositionLine++; //Сдвинуть вниз
+            Tetromino.CurrentTetrominoPositionLine++;
 
-            if (IsCurrentShapeBeyondCanvasBottom() || DoesCurrentShapeCollideWithData()) //Коллизия?
+            if (IsCurrentShapeBeyondCanvasBottom() || DoesCurrentShapeCollideWithData()) 
             {
-                Tetromino.CurrentTetrominoCanMoveDown = false; //Флаг
-                RestorePositionAndRotation(); //Восстановить состояние
+                Tetromino.CurrentTetrominoCanMoveDown = false; 
+                RestorePositionAndRotation();
             }
         }
 
@@ -219,7 +217,7 @@ namespace Tetris
 
         public void CheckKeyboardInputAgainstCanvasAndData()
         {
-            BackUpPositionAndRotation(); //Запомнить состояние
+            BackUpPositionAndRotation(); 
 
             if (Input.IsKeyDown(Keys.LEFT))
             {
@@ -267,7 +265,6 @@ namespace Tetris
             }
         }
 
-        // Returns true if the current shape is out of the left or right side of the screen 
         private OutOfScreenProperties CheckCurrentShapeOutOfScreenLeftRight()
         {
             if (Tetromino.CurrentTetrominoPositionColumn + Tetromino.CurrentTetrominoRotation.GetLength(1) > Settings.ColumnNumber)
