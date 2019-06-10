@@ -20,7 +20,11 @@ namespace Tetris
         public const int PixelSizeX = 30;
         public const int PixelSizeY = 30;
 
+        public static int LevelSelector = 0;
         public static int Level = LineNumber - 0;
+
+        public static int SpeedSelector = 9;
+        public static int Speed = 10 - SpeedSelector;
 
         public static int HiScore = 0;
         public static int CurrentScore = 0;

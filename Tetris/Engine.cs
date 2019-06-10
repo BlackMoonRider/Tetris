@@ -10,7 +10,7 @@ namespace Tetris
 {
     class Engine
     {
-        private readonly ConsoleGraphics consoleGraphics;
+        private readonly ConsoleGraphics consoleGraphics; // COLORS TO ENUM!
         Rectangle canvas;
         Rectangle screen;
         Grid grid;
@@ -19,12 +19,15 @@ namespace Tetris
         int backupPositionLine;
         int backupPositionColumn;
         bool[,] backupRotation;
+        int speedTracking;
+        bool keypressIsAllowed;
 
         public Engine(ConsoleGraphics consoleGraphics)
         {
             this.consoleGraphics = consoleGraphics;
             this.canvas = new Rectangle(0, 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, 0xFFFF0000);
             GameReset();
+            SetTimer();
         }
 
         private void GameReset()
@@ -34,9 +37,24 @@ namespace Tetris
             ResetCurrentScore();
         }
 
+        private void SetTimer()
+        {
+            var timer = new System.Timers.Timer(100);
+            timer.Elapsed += (_, __) => keypressIsAllowed = true;
+            timer.AutoReset = true;
+            timer.Enabled = true;
+        }
+
+        private void DisableKeypress()
+        {
+            keypressIsAllowed = false;
+        }
+
         public void DrawTitileScreen()
         {
-            while (true)
+            bool proceed = false;
+
+            while (!proceed)
             {
                 canvas.Render(consoleGraphics);
                 consoleGraphics.DrawString("TETЯIS", "Times New Roman", 0xFFFFFF00, 150, 80, 100);
@@ -47,8 +65,10 @@ namespace Tetris
                 consoleGraphics.FlipPages();
 
                 if (Input.IsKeyDown(Keys.SPACE))
-                    break;
+                    proceed = true;
             }
+
+            System.Threading.Thread.Sleep(100);
         }
 
         public bool DrawGameOverScreen()
@@ -74,6 +94,7 @@ namespace Tetris
                 }
             }
 
+            System.Threading.Thread.Sleep(100);
             return restartGame;
         }
 
@@ -81,6 +102,58 @@ namespace Tetris
         {
             canvas = new Rectangle(0, 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, 0xFF000000);
             canvas.Render(consoleGraphics);
+        }
+
+        public void DrawGameMenu()
+        {
+            bool proceed = false;
+
+            int cursorStart = 250;
+            int cursorOffset = 100;
+
+            int cursorPosition = cursorStart;
+
+            while (!proceed)
+            {
+                canvas = new Rectangle(0, 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, 0x26262626);
+                canvas.Render(consoleGraphics);
+                consoleGraphics.DrawString("GAME SETTINGS", "Consolas", 0xFFFFFF00, 150, 70, 50);
+                consoleGraphics.DrawString($"LEVEL: {Settings.LevelSelector}", "Consolas", 0xFFFFFF00, 250, cursorStart, 30);
+                consoleGraphics.DrawString($"SHAPES:", "Consolas", 0xFFFFFF00, 250, cursorStart + cursorOffset, 30);
+                consoleGraphics.DrawString("GAME SETTINGS", "Consolas", 0xFFFFFF00, 250, cursorStart + cursorOffset * 2, 30);
+                PlaceCursor();
+                consoleGraphics.DrawString("PRESS ENTER TO ADJUST SETTINGS", "Consolas", 0xFFFFFF00, 230, 650, 20);
+                consoleGraphics.DrawString("PRESS SPACE TO START GAME", "Consolas", 0xFFFFFF00, 230, 680, 20);
+                consoleGraphics.FlipPages();
+
+                if (Input.IsKeyDown(Keys.SPACE))
+                    proceed = true;
+                if (Input.IsKeyDown(Keys.DOWN))
+                    MoveCursorDown();
+                if (Input.IsKeyDown(Keys.UP))
+                    MoveCursorUp();
+            }
+
+            void PlaceCursor()
+            {
+                consoleGraphics.DrawString(">>", "Consolas", 0xFFFFFF00, 150, cursorPosition, 30);
+            }
+
+            void MoveCursorDown()
+            {
+                cursorPosition = cursorPosition >= cursorStart + (cursorOffset * 2)
+                    ? cursorPosition = cursorStart
+                    : cursorPosition + cursorOffset;
+                Thread.Sleep(100);
+            }
+
+            void MoveCursorUp()
+            {
+                cursorPosition = cursorPosition <= cursorStart
+                    ? cursorPosition = cursorStart + (cursorOffset * 2)
+                    : cursorPosition - cursorOffset;
+                Thread.Sleep(100);
+            }
         }
 
         public void SetLevel() // TODO
@@ -102,7 +175,7 @@ namespace Tetris
             consoleGraphics.DrawString($"HI-SCORE: {Settings.HiScore}", "Consolas", 0xFFFFFF00, 230, 710, 20);
 
             consoleGraphics.FlipPages();
-            System.Threading.Thread.Sleep(100);
+            System.Threading.Thread.Sleep(10);
         }   
 
         public void SetCurrentTetromino()
@@ -158,17 +231,29 @@ namespace Tetris
             backupRotation = (bool[,])Tetromino.CurrentTetrominoRotation.Clone();
         }
         
-        public void MoveCurrentShapeDown() 
+        public void MoveCurrentShapeDown() // Double check this
         {
-            BackUpPositionAndRotation();
-
-            Tetromino.CurrentTetrominoPositionLine++;
-
-            if (IsCurrentShapeBeyondCanvasBottom() || DoesCurrentShapeCollideWithData()) 
+            if (speedTracking > 0)
             {
-                Tetromino.CurrentTetrominoCanMoveDown = false; 
-                RestorePositionAndRotation();
+                speedTracking--;
+                return;
             }
+            else
+            {
+                speedTracking = Settings.Speed;
+
+                BackUpPositionAndRotation();
+
+                Tetromino.CurrentTetrominoPositionLine++;
+
+                if (IsCurrentShapeBeyondCanvasBottom() || DoesCurrentShapeCollideWithData())
+                {
+                    Tetromino.CurrentTetrominoCanMoveDown = false;
+                    RestorePositionAndRotation();
+                }
+            }
+
+            
         }
 
         public void RestorePositionAndRotation()
@@ -217,27 +302,29 @@ namespace Tetris
 
         public void CheckKeyboardInputAgainstCanvasAndData()
         {
-            BackUpPositionAndRotation(); 
+            BackUpPositionAndRotation();
 
-            if (Input.IsKeyDown(Keys.LEFT))
+            if (Input.IsKeyDown(Keys.LEFT) && keypressIsAllowed)
             {
                 Tetromino.CurrentTetrominoPositionColumn--;
                 if (CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Left || DoesCurrentShapeCollideWithData())
                 {
                     RestorePositionAndRotation();
                 }
+                DisableKeypress();
             }
 
-            else if (Input.IsKeyDown(Keys.RIGHT))
+            else if (Input.IsKeyDown(Keys.RIGHT) && keypressIsAllowed)
             {
                 Tetromino.CurrentTetrominoPositionColumn++;
                 if (CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Right || DoesCurrentShapeCollideWithData())
                 {
                     RestorePositionAndRotation();
                 }
+                DisableKeypress();
             }
 
-            else if (Input.IsKeyDown(Keys.UP))
+            else if (Input.IsKeyDown(Keys.UP) && keypressIsAllowed)
             {
                 currentTetromino.SetNextRotation();
                 Tetromino.CurrentTetrominoRotation = currentTetromino.GetCurrentRotation();
@@ -262,6 +349,13 @@ namespace Tetris
                         RestorePositionAndRotation();
                     }
                 }
+                Thread.Sleep(50);
+                DisableKeypress();
+            }
+
+            else if (Input.IsKeyDown(Keys.DOWN))
+            {
+                speedTracking = 0;
             }
         }
 

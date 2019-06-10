@@ -23,7 +23,7 @@ namespace Tetris
             Engine engine = new Engine(consoleGraphics);
 
             engine.DrawTitileScreen();
-
+            engine.DrawGameMenu();
             engine.DrawBlackCanvas();
             engine.SetLevel();
 
