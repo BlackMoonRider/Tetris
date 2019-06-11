@@ -6,19 +6,13 @@ using System.Threading.Tasks;
 
 namespace Tetris
 {
-    class TetrominoL : Tetromino
+    class PentominoT : AbstractShape
     {
         protected override bool[,] RotationA { get; } =
         {
-            {false, false, true },
             {true, true, true },
-        };
-
-        protected override bool[,] RotationB { get; set; } =
-        {
-            {true, false },
-            {true, false },
-            {true, true },
+            {false, true, false },
+            {false, true, false },
         };
     }
 }

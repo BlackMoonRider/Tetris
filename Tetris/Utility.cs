@@ -52,5 +52,16 @@ namespace Tetris
 
             return result;
         }
+
+        public static bool[,] GetRandomArray5x5()
+        {
+            bool[,] result = new bool[5, 5];
+
+            for (int line = 0; line < result.GetLength(0); line++)
+                for (int column = 0; column < result.GetLength(1); column++)
+                    result[line, column] = Random.Next(2) == 1 ? true : false;
+
+            return result;
+        }
     }
 }

@@ -15,7 +15,7 @@ namespace Tetris
         Rectangle screen;
         Grid grid;
         Grid currentGrid;
-        Tetromino currentTetromino;
+        AbstractShape currentTetromino;
         int backupPositionLine;
         int backupPositionColumn;
         bool[,] backupRotation;
@@ -181,10 +181,16 @@ namespace Tetris
 
                 else if (cursorPosition == cursorStart + (cursorOffset * 2))
                 {
-                    if (Settings.ShapeSet == ShapeSets.NotTooRough)
+                    if (Settings.ShapeSet == ShapeSets.Nightmare)
                         Settings.ShapeSet = ShapeSets.TooYoungToDie;
-                    else
+                    else if (Settings.ShapeSet == ShapeSets.TooYoungToDie)
                         Settings.ShapeSet = ShapeSets.NotTooRough;
+                    else if (Settings.ShapeSet == ShapeSets.NotTooRough)
+                        Settings.ShapeSet = ShapeSets.HurtMePlenty;
+                    else if (Settings.ShapeSet == ShapeSets.HurtMePlenty)
+                        Settings.ShapeSet = ShapeSets.UltraViolence;
+                    else if (Settings.ShapeSet == ShapeSets.UltraViolence)
+                        Settings.ShapeSet = ShapeSets.Nightmare;
                 }
 
                 Thread.Sleep(30);
@@ -220,7 +226,7 @@ namespace Tetris
             switch (nextShape)
             {
                 case 0:
-                    currentTetromino = new TetrominoO();
+                    currentTetromino = new TetrominoO(); // Too young to die
                     break;
                 case 1:
                     currentTetromino = new TetrominoT();
@@ -232,19 +238,112 @@ namespace Tetris
                     currentTetromino = new TetrominoJ();
                     break;
                 case 4:
-                    currentTetromino = new TetrominoL();
+                    currentTetromino = new TetrominoL(); 
                     break;
                 case 5:
-                    currentTetromino = new TetrominoS();
+                    currentTetromino = new TetrominoS(); // Not too rough
+                    break;
+                case 6:
+                    currentTetromino = new TetrominoZ();
+                    break;
+                case 7:
+                    currentTetromino = new Monomino(); // Hurt me plenty
+                    break;
+                case 8:
+                    currentTetromino = new Domino();
+                    break;
+                case 9:
+                    currentTetromino = new TrominoI();
+                    break;
+                case 10:
+                    currentTetromino = new TrominoL();
+                    break;
+                case 11:
+                    currentTetromino = new PentominoS();
+                    break;
+                case 12:
+                    currentTetromino = new PentominoZ();
+                    break;
+                case 13:
+                    currentTetromino = new PentominoT();
+                    break;
+                case 14:
+                    currentTetromino = new PentominoU();
+                    break;
+                case 15:
+                    currentTetromino = new PentominoX();
+                    break;
+                case 16:
+                    currentTetromino = new PentominoV(); // Ultra-Violence
+                    break;
+                case 17:
+                    currentTetromino = new PentominoW();
+                    break;
+                case 18:
+                    currentTetromino = new Hexomino1();
+                    break;
+                case 19:
+                    currentTetromino = new Hexomino2();
+                    break;
+                case 20:
+                    currentTetromino = new Hexomino3();
+                    break;
+                case 21:
+                    currentTetromino = new Hexomino4();
+                    break;
+                case 22:
+                    currentTetromino = new Hexomino5();
+                    break;
+                case 23:
+                    currentTetromino = new Hexomino6();
+                    break;
+                case 24:
+                    currentTetromino = new Heptomino1();
+                    break;
+                case 25:
+                    currentTetromino = new Heptomino2();
+                    break;
+                case 26:
+                    currentTetromino = new Heptomino3();
+                    break;
+                case 27:
+                    currentTetromino = new Octomino1();
+                    break;
+                case 28:
+                    currentTetromino = new Octomino2();
+                    break;
+                case 29:
+                    currentTetromino = new Octomino3();
+                    break;
+                case 30:
+                    currentTetromino = new Octomino4();
+                    break;
+                case 31:
+                    currentTetromino = new Octomino5();
+                    break;
+                case 32:
+                    currentTetromino = new Octomino6();
+                    break;
+                case 33:
+                    currentTetromino = new Randomino2x3(); // Nightmare
+                    break;
+                case 34:
+                    currentTetromino = new Randomino3x3();
+                    break;
+                case 35:
+                    currentTetromino = new Randomino3x4();
+                    break;
+                case 36:
+                    currentTetromino = new Randomino4x4();
                     break;
                 default:
-                    currentTetromino = new Randomino3x4();
+                    currentTetromino = new Randomino5x5();
                     break;
             }
 
-            Tetromino.CurrentTetrominoRotation = currentTetromino.GetCurrentRotation();
-            Tetromino.CurrentTetrominoPositionLine = 0;
-            Tetromino.CurrentTetrominoPositionColumn = 4;
+            AbstractShape.CurrentTetrominoRotation = currentTetromino.GetCurrentRotation();
+            AbstractShape.CurrentTetrominoPositionLine = 0;
+            AbstractShape.CurrentTetrominoPositionColumn = 4;
         }
 
         public void PutCurrentTetrominoOnCurrentGrid()
@@ -261,9 +360,9 @@ namespace Tetris
 
         public void BackUpPositionAndRotation()
         {
-            backupPositionLine = Tetromino.CurrentTetrominoPositionLine;
-            backupPositionColumn = Tetromino.CurrentTetrominoPositionColumn;
-            backupRotation = (bool[,])Tetromino.CurrentTetrominoRotation.Clone();
+            backupPositionLine = AbstractShape.CurrentTetrominoPositionLine;
+            backupPositionColumn = AbstractShape.CurrentTetrominoPositionColumn;
+            backupRotation = (bool[,])AbstractShape.CurrentTetrominoRotation.Clone();
         }
         
         public void MoveCurrentShapeDown()
@@ -279,11 +378,11 @@ namespace Tetris
 
                 BackUpPositionAndRotation();
 
-                Tetromino.CurrentTetrominoPositionLine++;
+                AbstractShape.CurrentTetrominoPositionLine++;
 
                 if (IsCurrentShapeBeyondCanvasBottom() || DoesCurrentShapeCollideWithData())
                 {
-                    Tetromino.CurrentTetrominoCanMoveDown = false;
+                    AbstractShape.CurrentTetrominoCanMoveDown = false;
                     RestorePositionAndRotation();
                 }
             }
@@ -293,9 +392,9 @@ namespace Tetris
 
         public void RestorePositionAndRotation()
         {
-            Tetromino.CurrentTetrominoPositionLine = backupPositionLine;
-            Tetromino.CurrentTetrominoPositionColumn = backupPositionColumn;
-            Tetromino.CurrentTetrominoRotation = (bool[,])backupRotation.Clone();
+            AbstractShape.CurrentTetrominoPositionLine = backupPositionLine;
+            AbstractShape.CurrentTetrominoPositionColumn = backupPositionColumn;
+            AbstractShape.CurrentTetrominoRotation = (bool[,])backupRotation.Clone();
         }
 
         public void PutResultOnPermanentGrid()
@@ -308,12 +407,12 @@ namespace Tetris
         {
             bool doesCollide = false;
 
-            for (int line = 0; line < Tetromino.CurrentTetrominoRotation.GetLength(0); line++)
+            for (int line = 0; line < AbstractShape.CurrentTetrominoRotation.GetLength(0); line++)
             {
-                for (int column = 0; column < Tetromino.CurrentTetrominoRotation.GetLength(1); column++)
+                for (int column = 0; column < AbstractShape.CurrentTetrominoRotation.GetLength(1); column++)
                 {
-                    if (Tetromino.CurrentTetrominoRotation[line, column] && 
-                        currentGrid.BoolData[line + Tetromino.CurrentTetrominoPositionLine, column + Tetromino.CurrentTetrominoPositionColumn])
+                    if (AbstractShape.CurrentTetrominoRotation[line, column] && 
+                        currentGrid.BoolData[line + AbstractShape.CurrentTetrominoPositionLine, column + AbstractShape.CurrentTetrominoPositionColumn])
                     {
                         doesCollide = true;
                         break;
@@ -329,7 +428,7 @@ namespace Tetris
         {
             bool isBeyond = false;
 
-            if (Tetromino.CurrentTetrominoPositionLine + Tetromino.CurrentTetrominoRotation.GetLength(0) > Settings.LineNumber)
+            if (AbstractShape.CurrentTetrominoPositionLine + AbstractShape.CurrentTetrominoRotation.GetLength(0) > Settings.LineNumber)
                 isBeyond = true;
 
             return isBeyond;
@@ -341,7 +440,7 @@ namespace Tetris
 
             if (Input.IsKeyDown(Keys.LEFT) && keypressIsAllowed)
             {
-                Tetromino.CurrentTetrominoPositionColumn--;
+                AbstractShape.CurrentTetrominoPositionColumn--;
                 if (CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Left || DoesCurrentShapeCollideWithData())
                 {
                     RestorePositionAndRotation();
@@ -351,7 +450,7 @@ namespace Tetris
 
             else if (Input.IsKeyDown(Keys.RIGHT) && keypressIsAllowed)
             {
-                Tetromino.CurrentTetrominoPositionColumn++;
+                AbstractShape.CurrentTetrominoPositionColumn++;
                 if (CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Right || DoesCurrentShapeCollideWithData())
                 {
                     RestorePositionAndRotation();
@@ -362,7 +461,7 @@ namespace Tetris
             else if (Input.IsKeyDown(Keys.UP) && keypressIsAllowed)
             {
                 currentTetromino.SetNextRotation();
-                Tetromino.CurrentTetrominoRotation = currentTetromino.GetCurrentRotation();
+                AbstractShape.CurrentTetrominoRotation = currentTetromino.GetCurrentRotation();
                 if (IsCurrentShapeBeyondCanvasBottom())
                 {
                     currentTetromino.SetPreviousRotation();
@@ -372,11 +471,11 @@ namespace Tetris
                 {
                     while (CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Left)
                     {
-                        Tetromino.CurrentTetrominoPositionColumn++;
+                        AbstractShape.CurrentTetrominoPositionColumn++;
                     }
                     while (CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Right)
                     {
-                        Tetromino.CurrentTetrominoPositionColumn--;
+                        AbstractShape.CurrentTetrominoPositionColumn--;
                     }
                     if (DoesCurrentShapeCollideWithData())
                     {
@@ -396,9 +495,9 @@ namespace Tetris
 
         private OutOfScreenProperties CheckCurrentShapeOutOfScreenLeftRight()
         {
-            if (Tetromino.CurrentTetrominoPositionColumn + Tetromino.CurrentTetrominoRotation.GetLength(1) > Settings.ColumnNumber)
+            if (AbstractShape.CurrentTetrominoPositionColumn + AbstractShape.CurrentTetrominoRotation.GetLength(1) > Settings.ColumnNumber)
                 return OutOfScreenProperties.Right;
-            if (Tetromino.CurrentTetrominoPositionColumn < 0)
+            if (AbstractShape.CurrentTetrominoPositionColumn < 0)
                 return OutOfScreenProperties.Left;
 
             return OutOfScreenProperties.None;

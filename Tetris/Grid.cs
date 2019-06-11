@@ -31,10 +31,10 @@ namespace Tetris
         {
             PixelData.Clear();
 
-            for (int line = 0; line < Tetromino.CurrentTetrominoRotation.GetLength(0); line++)
-                for (int column = 0; column < Tetromino.CurrentTetrominoRotation.GetLength(1); column++)
-                    if (Tetromino.CurrentTetrominoRotation[line, column])
-                        BoolData[line + Tetromino.CurrentTetrominoPositionLine, column + Tetromino.CurrentTetrominoPositionColumn] = true;
+            for (int line = 0; line < AbstractShape.CurrentTetrominoRotation.GetLength(0); line++)
+                for (int column = 0; column < AbstractShape.CurrentTetrominoRotation.GetLength(1); column++)
+                    if (AbstractShape.CurrentTetrominoRotation[line, column])
+                        BoolData[line + AbstractShape.CurrentTetrominoPositionLine, column + AbstractShape.CurrentTetrominoPositionColumn] = true;
         }
 
         public void ConvertBoolDataToPixelData()

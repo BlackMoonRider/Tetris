@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace Tetris
 {
-    enum ShapeSets
+    class TrominoI : AbstractShape
     {
-        TooYoungToDie = 5,
-        NotTooRough = 7,
-        HurtMePlenty = 16,
-        UltraViolence = 33,
-        Nightmare = 38
+        protected override bool[,] RotationA { get; } =
+        {
+            {true, true, true},
+        };
     }
 }

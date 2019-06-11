@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace Tetris
 {
-    class Randomino3x4 : Tetromino
+    class Domino : AbstractShape
     {
-        protected override bool[,] RotationA { get; } = Utility.GetRandomArray3x4();
+        protected override bool[,] RotationA { get; } =
+        {
+            {true, true },
+        };
     }
 }

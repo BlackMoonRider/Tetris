@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Tetris
 {
-    abstract class Tetromino
+    abstract class AbstractShape
     {
         protected virtual bool[,] RotationA { get; }
         protected virtual bool[,] RotationB { get; set; }
@@ -21,7 +21,7 @@ namespace Tetris
         static public bool[,] CurrentTetrominoRotation { get; set; }
         static public bool CurrentTetrominoCanMoveDown { get; set; }
 
-        public Tetromino()
+        public AbstractShape()
         {
             RotationD = RotateArrayClockwise(RotationA);
             RotationC = RotateArrayClockwise(RotationD);

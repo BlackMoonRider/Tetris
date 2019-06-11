@@ -32,7 +32,7 @@ namespace Tetris
             {
                 engine.SetCurrentTetromino();
 
-                Tetromino.CurrentTetrominoCanMoveDown = true;
+                AbstractShape.CurrentTetrominoCanMoveDown = true;
 
                 if (engine.DoesCurrentShapeCollideWithData())
                 {
@@ -45,7 +45,7 @@ namespace Tetris
                     }
                 }
 
-                while (Tetromino.CurrentTetrominoCanMoveDown)
+                while (AbstractShape.CurrentTetrominoCanMoveDown)
                 {
 
                     engine.CopyGridToCurrentGrid();
