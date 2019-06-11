@@ -181,10 +181,10 @@ namespace Tetris
 
                 else if (cursorPosition == cursorStart + (cursorOffset * 2))
                 {
-                    if (Settings.ShapeSet == ShapeSets.HurtMePlenty)
+                    if (Settings.ShapeSet == ShapeSets.NotTooRough)
                         Settings.ShapeSet = ShapeSets.TooYoungToDie;
                     else
-                        Settings.ShapeSet = ShapeSets.HurtMePlenty;
+                        Settings.ShapeSet = ShapeSets.NotTooRough;
                 }
 
                 Thread.Sleep(30);
@@ -238,7 +238,7 @@ namespace Tetris
                     currentTetromino = new TetrominoS();
                     break;
                 default:
-                    currentTetromino = new TetrominoZ();
+                    currentTetromino = new Randomino3x4();
                     break;
             }
 

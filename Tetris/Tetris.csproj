@@ -54,6 +54,8 @@
     <Compile Include="Rectangle.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="ShapeSets.cs" />
+    <Compile Include="Tetrominos\PentominoZ.cs" />
+    <Compile Include="Tetrominos\Randomino3x4.cs" />
     <Compile Include="Tetrominos\Tetromino.cs" />
     <Compile Include="Tetrominos\TetrominoI.cs" />
     <Compile Include="Tetrominos\TetrominoJ.cs" />

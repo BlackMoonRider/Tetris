@@ -15,23 +15,5 @@ namespace Tetris
             {true},
             {true},
         };
-
-        protected override bool[,] RotationB { get; } =
-        {
-            {true, true, true, true},
-        };
-
-        protected override bool[,] RotationC { get; } =
-        {
-            {true},
-            {true},
-            {true},
-            {true},
-        };
-
-        protected override bool[,] RotationD { get; } =
-        {
-            {true, true, true, true},
-        };
     }
 }
