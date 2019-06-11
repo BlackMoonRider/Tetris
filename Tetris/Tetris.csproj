@@ -53,6 +53,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rectangle.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="ShapeSets.cs" />
     <Compile Include="Tetrominos\Tetromino.cs" />
     <Compile Include="Tetrominos\TetrominoI.cs" />
     <Compile Include="Tetrominos\TetrominoJ.cs" />

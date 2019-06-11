@@ -120,7 +120,7 @@ namespace Tetris
                 consoleGraphics.DrawString("GAME SETTINGS", "Consolas", 0xFFFFFF00, 150, 70, 50);
                 consoleGraphics.DrawString($"LEVEL: {Settings.LevelSelector}", "Consolas", 0xFFFFFF00, 250, cursorStart, 30);
                 consoleGraphics.DrawString($"SPEED: {Settings.SpeedSelector}", "Consolas", 0xFFFFFF00, 250, cursorStart + cursorOffset, 30);
-                consoleGraphics.DrawString($"SHAPES:", "Consolas", 0xFFFFFF00, 250, cursorStart + cursorOffset * 2, 30);
+                consoleGraphics.DrawString($"SHAPES: {Settings.ShapeSetName}", "Consolas", 0xFFFFFF00, 250, cursorStart + cursorOffset * 2, 30);
                 PlaceCursor();
                 consoleGraphics.DrawString("PRESS UP OR DOWN TO NAVIGATE", "Consolas", 0xFFFFFF00, 150, 620, 20);
                 consoleGraphics.DrawString("PRESS ENTER TO CHANGE SETTINGS", "Consolas", 0xFFFFFF00, 150, 650, 20);
@@ -179,11 +179,19 @@ namespace Tetris
                         Settings.SpeedSelector++;
                 }
 
+                else if (cursorPosition == cursorStart + (cursorOffset * 2))
+                {
+                    if (Settings.ShapeSet == ShapeSets.HurtMePlenty)
+                        Settings.ShapeSet = ShapeSets.TooYoungToDie;
+                    else
+                        Settings.ShapeSet = ShapeSets.HurtMePlenty;
+                }
+
                 Thread.Sleep(30);
             }
         }
 
-        public void SetLevel() // TODO
+        public void SetLevel()
         {
             grid.FillBoolDataWithRandomData(Settings.Level);
         }
@@ -207,10 +215,13 @@ namespace Tetris
 
         public void SetCurrentTetromino()
         {
-            int nextShape = Utility.Random.Next(7);
+            int nextShape = Utility.Random.Next((int)Settings.ShapeSet);
 
             switch (nextShape)
             {
+                case 0:
+                    currentTetromino = new TetrominoO();
+                    break;
                 case 1:
                     currentTetromino = new TetrominoT();
                     break;
@@ -226,11 +237,8 @@ namespace Tetris
                 case 5:
                     currentTetromino = new TetrominoS();
                     break;
-                case 6:
-                    currentTetromino = new TetrominoZ();
-                    break;
                 default:
-                    currentTetromino = new TetrominoO();
+                    currentTetromino = new TetrominoZ();
                     break;
             }
 
@@ -258,7 +266,7 @@ namespace Tetris
             backupRotation = (bool[,])Tetromino.CurrentTetrominoRotation.Clone();
         }
         
-        public void MoveCurrentShapeDown() // Double check this
+        public void MoveCurrentShapeDown()
         {
             if (speedTracking > 0)
             {

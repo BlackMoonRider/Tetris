@@ -11,7 +11,7 @@ namespace Tetris
         public const int ConsoleWidth = 100;
         public const int ConsoleHeight = 50;
 
-        public const int LineNumber = 21;  
+        public const int LineNumber = 21;
         public const int ColumnNumber = 10;
 
         public const int canvasOffsetX = (8 * ConsoleWidth - 10 * PixelSizeX) / 2;
@@ -23,12 +23,29 @@ namespace Tetris
         public static int LevelSelector = 0;
         public static int Level => LineNumber - LevelSelector;
 
-
         public static int SpeedSelector = 0;
-
         public static int Speed => 10 - SpeedSelector;
 
-        public static int ShapeSet = 0; // Use enum here
+        public static ShapeSets ShapeSet = ShapeSets.NotTooRough;
+        public static string ShapeSetName
+        {
+            get
+            {
+                switch (ShapeSet)
+                {
+                    case ShapeSets.TooYoungToDie:
+                        return "Too young to die";
+                    case ShapeSets.NotTooRough:
+                        return "Not too rough";
+                    case ShapeSets.HurtMePlenty:
+                        return "Hurt me plenty";
+                    case ShapeSets.UltraViolence:
+                        return "Ultra-Violence";
+                    default:
+                        return "Nightmare!";
+                }
+            }
+        }
 
         public static int HiScore = 0;
         public static int CurrentScore = 0;
