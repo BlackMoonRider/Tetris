@@ -289,55 +289,25 @@ namespace Tetris
                     currentTetromino = new Hexomino3();
                     break;
                 case 21:
-                    currentTetromino = new Hexomino4();
-                    break;
-                case 22:
-                    currentTetromino = new Hexomino5();
-                    break;
-                case 23:
-                    currentTetromino = new Hexomino6();
-                    break;
-                case 24:
                     currentTetromino = new Heptomino1();
                     break;
-                case 25:
-                    currentTetromino = new Heptomino2();
+                case 22:
+                    currentTetromino = new Nonomino();
                     break;
-                case 26:
-                    currentTetromino = new Heptomino3();
-                    break;
-                case 27:
+                case 23:
                     currentTetromino = new Octomino1();
                     break;
-                case 28:
-                    currentTetromino = new Octomino2();
-                    break;
-                case 29:
-                    currentTetromino = new Octomino3();
-                    break;
-                case 30:
-                    currentTetromino = new Octomino4();
-                    break;
-                case 31:
-                    currentTetromino = new Octomino5();
-                    break;
-                case 32:
-                    currentTetromino = new Octomino6();
-                    break;
-                case 33:
+                case 24:
                     currentTetromino = new Randomino2x3(); // Nightmare
                     break;
-                case 34:
+                case 25:
                     currentTetromino = new Randomino3x3();
                     break;
-                case 35:
+                case 26:
                     currentTetromino = new Randomino3x4();
                     break;
-                case 36:
-                    currentTetromino = new Randomino4x4();
-                    break;
                 default:
-                    currentTetromino = new Randomino5x5();
+                    currentTetromino = new Randomino4x4();
                     break;
             }
 

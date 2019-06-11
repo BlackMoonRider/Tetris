@@ -11,7 +11,7 @@ namespace Tetris
         TooYoungToDie = 5,
         NotTooRough = 7,
         HurtMePlenty = 16,
-        UltraViolence = 33,
-        Nightmare = 38
+        UltraViolence = 24,
+        Nightmare = 27
     }
 }
