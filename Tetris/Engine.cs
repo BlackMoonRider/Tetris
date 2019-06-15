@@ -11,16 +11,16 @@ namespace Tetris
     class Engine
     {
         private readonly ConsoleGraphics consoleGraphics;
-        Rectangle canvas;
-        Rectangle screen;
-        Grid grid;
-        Grid currentGrid;
-        AbstractShape currentTetromino;
-        int backupPositionLine;
-        int backupPositionColumn;
-        bool[,] backupRotation;
-        int speedTracking;
-        bool keypressIsAllowed;
+        private Rectangle canvas;
+        private Rectangle screen;
+        private Grid grid;
+        private Grid currentGrid;
+        private AbstractShape currentTetromino;
+        private int backupPositionLine;
+        private int backupPositionColumn;
+        private bool[,] backupRotation;
+        private int speedTracking;
+        private bool keypressIsAllowed;
 
         public Engine(ConsoleGraphics consoleGraphics)
         {
