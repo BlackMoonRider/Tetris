@@ -45,22 +45,45 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CurrentShape.cs" />
+    <Compile Include="Colors.cs" />
+    <Compile Include="Shapes\Nonomino.cs" />
+    <Compile Include="Shapes\Randomino2x3.cs" />
+    <Compile Include="Shapes\Heptomino1.cs" />
+    <Compile Include="Shapes\Hexomino1.cs" />
+    <Compile Include="Shapes\Hexomino2.cs" />
+    <Compile Include="Shapes\Hexomino3.cs" />
+    <Compile Include="Shapes\Octomino1.cs" />
+    <Compile Include="Shapes\PentominoS.cs" />
+    <Compile Include="Shapes\PentominoT.cs" />
+    <Compile Include="Shapes\PentominoU.cs" />
+    <Compile Include="Shapes\Domino.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="Grid.cs" />
+    <Compile Include="OutOfScreenProperties.cs" />
     <Compile Include="Pixel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rectangle.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="Tetrominos\Tetromino.cs" />
-    <Compile Include="Tetrominos\TetrominoI.cs" />
-    <Compile Include="Tetrominos\TetrominoJ.cs" />
-    <Compile Include="Tetrominos\TetrominoL.cs" />
-    <Compile Include="Tetrominos\TetrominoO.cs" />
-    <Compile Include="Tetrominos\TetrominoS.cs" />
-    <Compile Include="Tetrominos\TetrominoT.cs" />
-    <Compile Include="Tetrominos\TetrominoZ.cs" />
+    <Compile Include="ShapeSets.cs" />
+    <Compile Include="Shapes\Monomino.cs" />
+    <Compile Include="Shapes\PentominoV.cs" />
+    <Compile Include="Shapes\PentominoW.cs" />
+    <Compile Include="Shapes\PentominoX.cs" />
+    <Compile Include="Shapes\PentominoZ.cs" />
+    <Compile Include="Shapes\Randomino3x3.cs" />
+    <Compile Include="Shapes\Randomino3x4.cs" />
+    <Compile Include="Shapes\Randomino4x4.cs" />
+    <Compile Include="Shapes\AbstractShape.cs" />
+    <Compile Include="Shapes\TetrominoI.cs" />
+    <Compile Include="Shapes\TetrominoJ.cs" />
+    <Compile Include="Shapes\TetrominoL.cs" />
+    <Compile Include="Shapes\TetrominoO.cs" />
+    <Compile Include="Shapes\TetrominoS.cs" />
+    <Compile Include="Shapes\TetrominoT.cs" />
+    <Compile Include="Shapes\TetrominoZ.cs" />
+    <Compile Include="Shapes\TrominoI.cs" />
+    <Compile Include="Shapes\TrominoL.cs" />
     <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>

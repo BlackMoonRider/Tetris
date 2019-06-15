@@ -15,16 +15,19 @@ namespace Tetris
         Rectangle screen;
         Grid grid;
         Grid currentGrid;
-        Tetromino currentTetromino;
+        AbstractShape currentTetromino;
         int backupPositionLine;
         int backupPositionColumn;
         bool[,] backupRotation;
+        int speedTracking;
+        bool keypressIsAllowed;
 
         public Engine(ConsoleGraphics consoleGraphics)
         {
             this.consoleGraphics = consoleGraphics;
-            this.canvas = new Rectangle(0, 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, 0xFFFF0000);
+            this.canvas = new Rectangle(0, 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, (uint)Colors.Red);
             GameReset();
+            SetTimer();
         }
 
         private void GameReset()
@@ -34,21 +37,38 @@ namespace Tetris
             ResetCurrentScore();
         }
 
+        private void SetTimer()
+        {
+            var timer = new System.Timers.Timer(100);
+            timer.Elapsed += (_, __) => keypressIsAllowed = true;
+            timer.AutoReset = true;
+            timer.Enabled = true;
+        }
+
+        private void DisableKeypress()
+        {
+            keypressIsAllowed = false;
+        }
+
         public void DrawTitileScreen()
         {
-            while (true)
+            bool proceed = false;
+
+            while (!proceed)
             {
                 canvas.Render(consoleGraphics);
-                consoleGraphics.DrawString("TETЯIS", "Times New Roman", 0xFFFFFF00, 150, 80, 100);
-                consoleGraphics.DrawString(" PRESS SPACE TO START", "Consolas", 0xFFFFFF00, 230, 650, 20);
-                consoleGraphics.DrawString("LOGO BY FREEPNG.RU   EDUCATIONAL PROJECT ©2019", "Consolas", 0xFFFFFF00, 225, 750, 10);
+                consoleGraphics.DrawString("TETЯIS", "Times New Roman", (uint)Colors.Yellow, 150, 80, 100);
+                consoleGraphics.DrawString(" PRESS SPACE TO START", "Consolas", (uint)Colors.Yellow, 230, 650, 20);
+                consoleGraphics.DrawString("LOGO BY FREEPNG.RU   EDUCATIONAL PROJECT ©2019", "Consolas", (uint)Colors.Yellow, 225, 750, 10);
                 ConsoleImage logo = consoleGraphics.LoadImage(@"logo.bmp");
                 consoleGraphics.DrawImage(logo, 255, 300);
                 consoleGraphics.FlipPages();
 
                 if (Input.IsKeyDown(Keys.SPACE))
-                    break;
+                    proceed = true;
             }
+
+            Utility.SleepLong();
         }
 
         public bool DrawGameOverScreen()
@@ -57,11 +77,11 @@ namespace Tetris
 
             while (!restartGame)
             {
-                canvas = new Rectangle(0, 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, 0x26262626);
+                canvas = new Rectangle(0, 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, (uint)Colors.GreyAlpha);
                 canvas.Render(consoleGraphics);
-                consoleGraphics.DrawString("GAME\r\nOVER", "Consolas", 0xFFFFFF00, 230, 80, 100);
-                consoleGraphics.DrawString("PRESS SPACE TO RESTART", "Consolas", 0xFFFFFF00, 230, 650, 20);
-                consoleGraphics.DrawString("PRESS ESC TO EXIT GAME", "Consolas", 0xFFFFFF00, 230, 680, 20);
+                consoleGraphics.DrawString("GAME\r\nOVER", "Consolas", (uint)Colors.Yellow, 230, 80, 100);
+                consoleGraphics.DrawString("PRESS SPACE TO RESTART", "Consolas", (uint)Colors.Yellow, 230, 650, 20);
+                consoleGraphics.DrawString("PRESS ESC TO EXIT GAME", "Consolas", (uint)Colors.Yellow, 230, 680, 20);
                 consoleGraphics.FlipPages();
 
                 if (Input.IsKeyDown(Keys.ESCAPE))
@@ -74,44 +94,144 @@ namespace Tetris
                 }
             }
 
+            Utility.SleepLong();
             return restartGame;
         }
 
-        public void DrawBlackCanvas()
+        private void DrawBlackCanvas()
         {
-            canvas = new Rectangle(0, 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, 0xFF000000);
+            canvas = new Rectangle(0, 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, (uint)Colors.Black);
             canvas.Render(consoleGraphics);
         }
 
-        public void SetLevel() // TODO
+        public void DrawGameMenu()
         {
-            grid.FillDataBoolWithRandomData(Settings.Level);
+            bool proceed = false;
+
+            int cursorStart = 250;
+            int cursorOffset = 100;
+
+            int cursorPosition = cursorStart;
+
+            while (!proceed)
+            {
+                canvas = new Rectangle(0, 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, (uint)Colors.GreyAlpha);
+                canvas.Render(consoleGraphics);
+                consoleGraphics.DrawString("GAME SETTINGS", "Consolas", (uint)Colors.Yellow, 150, 70, 50);
+                consoleGraphics.DrawString($"LEVEL: {Settings.LevelSelector}", "Consolas", (uint)Colors.Yellow, 240, cursorStart, 30);
+                consoleGraphics.DrawString($"SPEED: {Settings.SpeedSelector}", "Consolas", (uint)Colors.Yellow, 240, cursorStart + cursorOffset, 30);
+                consoleGraphics.DrawString($"SHAPES: {Settings.ShapeSetName}", "Consolas", (uint)Colors.Yellow, 240, cursorStart + cursorOffset * 2, 30);
+                PlaceCursor();
+                consoleGraphics.DrawString("PRESS UP OR DOWN TO NAVIGATE", "Consolas", (uint)Colors.Yellow, 150, 620, 20);
+                consoleGraphics.DrawString("PRESS ENTER TO CHANGE SETTINGS", "Consolas", (uint)Colors.Yellow, 150, 650, 20);
+                consoleGraphics.DrawString("PRESS SPACE TO START GAME", "Consolas", (uint)Colors.Yellow, 150, 680, 20);
+                consoleGraphics.DrawString("PRESS ESC TO EXIT GAME", "Consolas", (uint)Colors.Yellow, 150, 710, 20);
+                consoleGraphics.FlipPages();
+
+                if (Input.IsKeyDown(Keys.SPACE))
+                    proceed = true;
+                if (Input.IsKeyDown(Keys.DOWN))
+                    MoveCursorDown();
+                if (Input.IsKeyDown(Keys.UP))
+                    MoveCursorUp();
+                if (Input.IsKeyDown(Keys.RETURN))
+                    ChangeSettings();
+                if (Input.IsKeyDown(Keys.ESCAPE))
+                    Environment.Exit(0);
+            }
+
+            void PlaceCursor()
+            {
+                consoleGraphics.DrawString(">>", "Consolas", (uint)Colors.Yellow, 150, cursorPosition, 30);
+            }
+
+            void MoveCursorDown()
+            {
+                cursorPosition = cursorPosition >= cursorStart + (cursorOffset * 2)
+                    ? cursorPosition = cursorStart
+                    : cursorPosition + cursorOffset;
+
+                Utility.SleepLong();
+            }
+
+            void MoveCursorUp()
+            {
+                cursorPosition = cursorPosition <= cursorStart
+                    ? cursorPosition = cursorStart + (cursorOffset * 2)
+                    : cursorPosition - cursorOffset;
+
+                Utility.SleepLong();
+            }
+
+            void ChangeSettings()
+            {
+                if (cursorPosition == cursorStart + (cursorOffset * 0))
+                {
+                    if (Settings.LevelSelector >= 12)
+                        Settings.LevelSelector = 0;
+                    else
+                        Settings.LevelSelector++;
+                }
+
+                else if (cursorPosition == cursorStart + (cursorOffset * 1))
+                {
+                    if (Settings.SpeedSelector >= 9)
+                        Settings.SpeedSelector = 0;
+                    else
+                        Settings.SpeedSelector++;
+                }
+
+                else if (cursorPosition == cursorStart + (cursorOffset * 2))
+                {
+                    if (Settings.ShapeSet == ShapeSets.Nightmare)
+                        Settings.ShapeSet = ShapeSets.TooYoungToDie;
+                    else if (Settings.ShapeSet == ShapeSets.TooYoungToDie)
+                        Settings.ShapeSet = ShapeSets.NotTooRough;
+                    else if (Settings.ShapeSet == ShapeSets.NotTooRough)
+                        Settings.ShapeSet = ShapeSets.HurtMePlenty;
+                    else if (Settings.ShapeSet == ShapeSets.HurtMePlenty)
+                        Settings.ShapeSet = ShapeSets.UltraViolence;
+                    else if (Settings.ShapeSet == ShapeSets.UltraViolence)
+                        Settings.ShapeSet = ShapeSets.Nightmare;
+                }
+
+                Utility.SleepMiddle();
+            }
+
+            DrawBlackCanvas();
         }
 
-        public void RedrawScreen()
+        public void SetLevel()
         {
-            canvas = new Rectangle(Settings.canvasOffsetX + 0, Settings.canvasOffsetY + 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, 0xFF000000);
-            screen = new Rectangle(Settings.canvasOffsetX + 0, Settings.canvasOffsetY + 0, Grid.columnSize * Settings.PixelSizeY, Grid.lineSize * Settings.PixelSizeX, 0xFF262626);
+            grid.FillBoolDataWithRandomData(Settings.Level);
+        }
+
+        public void RedrawInGameScreen()
+        {
+            canvas = new Rectangle(Settings.canvasOffsetX + 0, Settings.canvasOffsetY + 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, (uint)Colors.Black);
+            screen = new Rectangle(Settings.canvasOffsetX + 0, Settings.canvasOffsetY + 0, Settings.ColumnNumber * Settings.PixelSizeY, Settings.LineNumber * Settings.PixelSizeX, (uint)Colors.Grey);
             canvas.Render(consoleGraphics);
             screen.Render(consoleGraphics);
 
             foreach (Pixel pixel in currentGrid.PixelData)
                 pixel.Render(consoleGraphics);
 
-            consoleGraphics.DrawString($"   SCORE: {Settings.CurrentScore}", "Consolas", 0xFFFFFF00, 230, 680, 20);
-            consoleGraphics.DrawString($"HI-SCORE: {Settings.HiScore}", "Consolas", 0xFFFFFF00, 230, 710, 20);
+            consoleGraphics.DrawString($"   SCORE: {Settings.CurrentScore}", "Consolas", (uint)Colors.Yellow, 230, 680, 20);
+            consoleGraphics.DrawString($"HI-SCORE: {Settings.HiScore}", "Consolas", (uint)Colors.Yellow, 230, 710, 20);
 
             consoleGraphics.FlipPages();
-            System.Threading.Thread.Sleep(100);
+            Utility.SleepShort();
         }   
 
         public void SetCurrentTetromino()
         {
-            // Create shape
-            int nextShape = Utility.Random.Next(7);
+            int nextShape = Utility.Random.Next((int)Settings.ShapeSet);
 
             switch (nextShape)
             {
+                case 0:
+                    currentTetromino = new TetrominoO(); // Too young to die
+                    break;
                 case 1:
                     currentTetromino = new TetrominoT();
                     break;
@@ -122,31 +242,89 @@ namespace Tetris
                     currentTetromino = new TetrominoJ();
                     break;
                 case 4:
-                    currentTetromino = new TetrominoL();
+                    currentTetromino = new TetrominoL(); 
                     break;
                 case 5:
-                    currentTetromino = new TetrominoS();
+                    currentTetromino = new TetrominoS(); // Not too rough
                     break;
                 case 6:
                     currentTetromino = new TetrominoZ();
                     break;
+                case 7:
+                    currentTetromino = new Monomino(); // Hurt me plenty
+                    break;
+                case 8:
+                    currentTetromino = new Domino();
+                    break;
+                case 9:
+                    currentTetromino = new TrominoI();
+                    break;
+                case 10:
+                    currentTetromino = new TrominoL();
+                    break;
+                case 11:
+                    currentTetromino = new PentominoS();
+                    break;
+                case 12:
+                    currentTetromino = new PentominoZ();
+                    break;
+                case 13:
+                    currentTetromino = new PentominoT();
+                    break;
+                case 14:
+                    currentTetromino = new PentominoU();
+                    break;
+                case 15:
+                    currentTetromino = new PentominoX();
+                    break;
+                case 16:
+                    currentTetromino = new PentominoV(); // Ultra-Violence
+                    break;
+                case 17:
+                    currentTetromino = new PentominoW();
+                    break;
+                case 18:
+                    currentTetromino = new Hexomino1();
+                    break;
+                case 19:
+                    currentTetromino = new Hexomino2();
+                    break;
+                case 20:
+                    currentTetromino = new Hexomino3();
+                    break;
+                case 21:
+                    currentTetromino = new Heptomino1();
+                    break;
+                case 22:
+                    currentTetromino = new Nonomino();
+                    break;
+                case 23:
+                    currentTetromino = new Octomino1();
+                    break;
+                case 24:
+                    currentTetromino = new Randomino2x3(); // Nightmare
+                    break;
+                case 25:
+                    currentTetromino = new Randomino3x3();
+                    break;
+                case 26:
+                    currentTetromino = new Randomino3x4();
+                    break;
                 default:
-                    currentTetromino = new TetrominoO();
+                    currentTetromino = new Randomino4x4();
                     break;
             }
 
-            // Set current shape and it's position
-            CurrentShape.Rotation = currentTetromino.GetCurrentRotation();
-            CurrentShape.PositionLine = 0;
-            CurrentShape.PositionColumn = 4;
-            //CurrentShape.IsInTheAir = true;
+            AbstractShape.CurrentTetrominoRotation = currentTetromino.GetCurrentRotation();
+            AbstractShape.CurrentTetrominoPositionLine = 0;
+            AbstractShape.CurrentTetrominoPositionColumn = 4;
         }
 
         public void PutCurrentTetrominoOnCurrentGrid()
         {
-            CopyGridToCurrentGrid(); // Copy all the data from the permanent grid to the current grid
-            currentGrid.PutCurrentShapeOnBoolData(); // Put a shape on the current grid
-            currentGrid.ConvertBoolDataToPixelData(); // Create an image to render
+            CopyGridToCurrentGrid(); 
+            currentGrid.PutCurrentShapeOnBoolData(); 
+            currentGrid.ConvertBoolDataToPixelData();
         }
 
         public void CopyGridToCurrentGrid()
@@ -154,39 +332,43 @@ namespace Tetris
             currentGrid.FeedWithBoolData(grid);
         }
 
-        public void BackUpPositionAndRotation()
+        private void BackUpPositionAndRotation()
         {
-            backupPositionLine = CurrentShape.PositionLine;
-            backupPositionColumn = CurrentShape.PositionColumn;
-            backupRotation = (bool[,])CurrentShape.Rotation.Clone();
+            backupPositionLine = AbstractShape.CurrentTetrominoPositionLine;
+            backupPositionColumn = AbstractShape.CurrentTetrominoPositionColumn;
+            backupRotation = (bool[,])AbstractShape.CurrentTetrominoRotation.Clone();
         }
         
-        public void MoveCurrentShapeDown() // Refactor this to be single-responsible
+        public void MoveCurrentShapeDown()
         {
-            BackUpPositionAndRotation();
-
-            CurrentShape.PositionLine++; //Сдвинуть вниз
-
-            if (IsCurrentShapeBeyondCanvasBottom() || DoesCurrentShapeCollideWithData()) //Коллизия?
+            if (speedTracking > 0)
             {
-                CurrentShape.CanMoveDown = false; //Флаг
-                RestorePositionAndRotation(); //Восстановить состояние
+                speedTracking--;
+                return;
             }
+            else
+            {
+                speedTracking = Settings.Speed;
+
+                BackUpPositionAndRotation();
+
+                AbstractShape.CurrentTetrominoPositionLine++;
+
+                if (IsCurrentShapeBeyondCanvasBottom() || DoesCurrentShapeCollideWithData())
+                {
+                    AbstractShape.CurrentTetrominoCanMoveDown = false;
+                    RestorePositionAndRotation();
+                }
+            }
+
+            
         }
 
-        public void UpdateBoolAndPixelData()
+        private void RestorePositionAndRotation()
         {
-            currentGrid.PutCurrentShapeOnBoolData();
-            currentGrid.DropFullLines(); // This line belongs to this position. You move it - you break everything.
-            currentGrid.ConvertBoolDataToPixelData();
-        }
-
-        public void RestorePositionAndRotation()
-        {
-            CurrentShape.PositionLine = backupPositionLine;
-            CurrentShape.PositionColumn = backupPositionColumn;
-            CurrentShape.Rotation = (bool[,])backupRotation.Clone();
-            //backupRotation.CopyTo(CurrentShape.Rotation, 0);
+            AbstractShape.CurrentTetrominoPositionLine = backupPositionLine;
+            AbstractShape.CurrentTetrominoPositionColumn = backupPositionColumn;
+            AbstractShape.CurrentTetrominoRotation = (bool[,])backupRotation.Clone();
         }
 
         public void PutResultOnPermanentGrid()
@@ -199,12 +381,12 @@ namespace Tetris
         {
             bool doesCollide = false;
 
-            for (int line = 0; line < CurrentShape.Rotation.GetLength(0); line++)
+            for (int line = 0; line < AbstractShape.CurrentTetrominoRotation.GetLength(0); line++)
             {
-                for (int column = 0; column < CurrentShape.Rotation.GetLength(1); column++)
+                for (int column = 0; column < AbstractShape.CurrentTetrominoRotation.GetLength(1); column++)
                 {
-                    if (CurrentShape.Rotation[line, column] && 
-                        currentGrid.BoolData[line + CurrentShape.PositionLine, column + CurrentShape.PositionColumn])
+                    if (AbstractShape.CurrentTetrominoRotation[line, column] && 
+                        currentGrid.BoolData[line + AbstractShape.CurrentTetrominoPositionLine, column + AbstractShape.CurrentTetrominoPositionColumn])
                     {
                         doesCollide = true;
                         break;
@@ -220,7 +402,7 @@ namespace Tetris
         {
             bool isBeyond = false;
 
-            if (CurrentShape.PositionLine + CurrentShape.Rotation.GetLength(0) > Settings.LineNumber)
+            if (AbstractShape.CurrentTetrominoPositionLine + AbstractShape.CurrentTetrominoRotation.GetLength(0) > Settings.LineNumber)
                 isBeyond = true;
 
             return isBeyond;
@@ -228,30 +410,32 @@ namespace Tetris
 
         public void CheckKeyboardInputAgainstCanvasAndData()
         {
-            BackUpPositionAndRotation(); //Запомнить состояние
+            BackUpPositionAndRotation();
 
-            if (Input.IsKeyDown(Keys.LEFT))
+            if (Input.IsKeyDown(Keys.LEFT) && keypressIsAllowed)
             {
-                CurrentShape.PositionColumn--;
+                AbstractShape.CurrentTetrominoPositionColumn--;
                 if (CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Left || DoesCurrentShapeCollideWithData())
                 {
                     RestorePositionAndRotation();
                 }
+                DisableKeypress();
             }
 
-            else if (Input.IsKeyDown(Keys.RIGHT))
+            else if (Input.IsKeyDown(Keys.RIGHT) && keypressIsAllowed)
             {
-                CurrentShape.PositionColumn++;
+                AbstractShape.CurrentTetrominoPositionColumn++;
                 if (CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Right || DoesCurrentShapeCollideWithData())
                 {
                     RestorePositionAndRotation();
                 }
+                DisableKeypress();
             }
 
-            else if (Input.IsKeyDown(Keys.UP))
+            else if (Input.IsKeyDown(Keys.UP) && keypressIsAllowed)
             {
                 currentTetromino.SetNextRotation();
-                CurrentShape.Rotation = currentTetromino.GetCurrentRotation();
+                AbstractShape.CurrentTetrominoRotation = currentTetromino.GetCurrentRotation();
                 if (IsCurrentShapeBeyondCanvasBottom())
                 {
                     currentTetromino.SetPreviousRotation();
@@ -261,11 +445,11 @@ namespace Tetris
                 {
                     while (CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Left)
                     {
-                        CurrentShape.PositionColumn++;
+                        AbstractShape.CurrentTetrominoPositionColumn++;
                     }
                     while (CheckCurrentShapeOutOfScreenLeftRight() == OutOfScreenProperties.Right)
                     {
-                        CurrentShape.PositionColumn--;
+                        AbstractShape.CurrentTetrominoPositionColumn--;
                     }
                     if (DoesCurrentShapeCollideWithData())
                     {
@@ -273,15 +457,21 @@ namespace Tetris
                         RestorePositionAndRotation();
                     }
                 }
+                Utility.SleepMiddle();
+                DisableKeypress();
+            }
+
+            else if (Input.IsKeyDown(Keys.DOWN))
+            {
+                speedTracking = 0;
             }
         }
 
-        // Returns true if the current shape is out of the left or right side of the screen 
         private OutOfScreenProperties CheckCurrentShapeOutOfScreenLeftRight()
         {
-            if (CurrentShape.PositionColumn + CurrentShape.Rotation.GetLength(1) > Settings.ColumnNumber)
+            if (AbstractShape.CurrentTetrominoPositionColumn + AbstractShape.CurrentTetrominoRotation.GetLength(1) > Settings.ColumnNumber)
                 return OutOfScreenProperties.Right;
-            if (CurrentShape.PositionColumn < 0)
+            if (AbstractShape.CurrentTetrominoPositionColumn < 0)
                 return OutOfScreenProperties.Left;
 
             return OutOfScreenProperties.None;

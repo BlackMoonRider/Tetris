@@ -9,17 +9,23 @@ namespace Tetris
 {
     class Pixel
     {
-        public int PositionLine { get; set; }
-        public int PositionColumn { get; set; }
-        public uint Color { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public Pixel(int x, int y, int w = Settings.PixelSizeX, int h = Settings.PixelSizeY, uint color = 0xFFFFFFFF)
+        public int PositionLine { get; }
+        public int PositionColumn { get; }
+        public uint Color { get; }
+        public int Width { get; }
+        public int Height { get; }
+
+        private const int shrinkWidth = 2;
+        private const int shrinkHeight = 2;
+        private const uint primaryColor = (uint)Colors.White;
+        private const uint secondaryColor = (uint)Colors.Red;
+
+        public Pixel(int x, int y, int width = Settings.PixelSizeX, int height = Settings.PixelSizeY, uint color = primaryColor)
         {
-            PositionColumn = x * w;
-            PositionLine = y * h;
-            Width = w;
-            Height = h;
+            PositionColumn = x * width;
+            PositionLine = y * height;
+            Width = width;
+            Height = height;
             Color = color;
         }
 
@@ -27,9 +33,8 @@ namespace Tetris
         {
             Rectangle pixel = new Rectangle(Settings.canvasOffsetX + PositionLine, Settings.canvasOffsetY + PositionColumn, Width, Height, Color);
             pixel.Render(graphics);
-            Rectangle inner = new Rectangle(Settings.canvasOffsetX + PositionLine + 1, Settings.canvasOffsetY + PositionColumn + 1, Width - 2, Height - 2, 0xFFFF0000);
+            Rectangle inner = new Rectangle(Settings.canvasOffsetX + PositionLine + shrinkWidth / 2, Settings.canvasOffsetY + PositionColumn + shrinkHeight / 2, Width - shrinkWidth, Height - shrinkHeight, secondaryColor);
             inner.Render(graphics);
         }
-
     }
 }
