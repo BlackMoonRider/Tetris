@@ -73,7 +73,7 @@
     <Compile Include="Shapes\Randomino3x3.cs" />
     <Compile Include="Shapes\Randomino3x4.cs" />
     <Compile Include="Shapes\Randomino4x4.cs" />
-    <Compile Include="Shapes\Tetromino.cs" />
+    <Compile Include="Shapes\AbstractShape.cs" />
     <Compile Include="Shapes\TetrominoI.cs" />
     <Compile Include="Shapes\TetrominoJ.cs" />
     <Compile Include="Shapes\TetrominoL.cs" />

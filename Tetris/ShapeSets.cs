@@ -12,6 +12,6 @@ namespace Tetris
         NotTooRough = 7,
         HurtMePlenty = 16,
         UltraViolence = 24,
-        Nightmare = 27
+        Nightmare = 28
     }
 }
