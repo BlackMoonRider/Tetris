@@ -23,38 +23,34 @@ namespace Tetris
 
         public AbstractShape()
         {
-            RotationD = RotateArrayClockwise(RotationA);
-            RotationC = RotateArrayClockwise(RotationD);
-            RotationB = RotateArrayClockwise(RotationC);
+            RotationD = RotateArray(RotationA);
+            RotationC = RotateArray(RotationD);
+            RotationB = RotateArray(RotationC);
             Rotations = new List<bool[,]> { RotationA, RotationB, RotationC, RotationD };
             CurrentRotation = Utility.Random.Next(4);
         }
 
-        bool[,] RotateArrayClockwise(bool[,] src) // Refactor and rename
+        bool[,] RotateArray(bool[,] array)
         {
-            int width;
-            int height;
-            bool[,] dst;
+            int lineNumber = array.GetUpperBound(1) + 1;
+            int columnNumber = array.GetUpperBound(0) + 1;
+            bool[,] result = new bool[lineNumber, columnNumber];
 
-            width = src.GetUpperBound(0) + 1;
-            height = src.GetUpperBound(1) + 1;
-            dst = new bool[height, width];
-
-            for (int row = 0; row < height; row++)
+            for (int line = 0; line < lineNumber; line++)
             {
-                for (int col = 0; col < width; col++)
+                for (int column = 0; column < columnNumber; column++)
                 {
-                    int newRow;
-                    int newCol;
+                    int newLine;
+                    int newColumn;
 
-                    newRow = col;
-                    newCol = height - (row + 1);
+                    newLine = column;
+                    newColumn = lineNumber - (line + 1);
 
-                    dst[newCol, newRow] = src[col, row];
+                    result[newColumn, newLine] = array[column, line];
                 }
             }
 
-            return dst;
+            return result;
         }
 
         public bool[,] GetCurrentRotation()
