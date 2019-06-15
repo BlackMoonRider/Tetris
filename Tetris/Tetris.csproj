@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Colors.cs" />
     <Compile Include="Shapes\Nonomino.cs" />
     <Compile Include="Shapes\Randomino2x3.cs" />
     <Compile Include="Shapes\Heptomino1.cs" />

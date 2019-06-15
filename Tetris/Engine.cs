@@ -10,7 +10,7 @@ namespace Tetris
 {
     class Engine
     {
-        private readonly ConsoleGraphics consoleGraphics; // COLORS TO ENUM!
+        private readonly ConsoleGraphics consoleGraphics;
         Rectangle canvas;
         Rectangle screen;
         Grid grid;
@@ -25,7 +25,7 @@ namespace Tetris
         public Engine(ConsoleGraphics consoleGraphics)
         {
             this.consoleGraphics = consoleGraphics;
-            this.canvas = new Rectangle(0, 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, 0xFFFF0000);
+            this.canvas = new Rectangle(0, 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, (uint)Colors.Red);
             GameReset();
             SetTimer();
         }
@@ -57,9 +57,9 @@ namespace Tetris
             while (!proceed)
             {
                 canvas.Render(consoleGraphics);
-                consoleGraphics.DrawString("TETЯIS", "Times New Roman", 0xFFFFFF00, 150, 80, 100);
-                consoleGraphics.DrawString(" PRESS SPACE TO START", "Consolas", 0xFFFFFF00, 230, 650, 20);
-                consoleGraphics.DrawString("LOGO BY FREEPNG.RU   EDUCATIONAL PROJECT ©2019", "Consolas", 0xFFFFFF00, 225, 750, 10);
+                consoleGraphics.DrawString("TETЯIS", "Times New Roman", (uint)Colors.Yellow, 150, 80, 100);
+                consoleGraphics.DrawString(" PRESS SPACE TO START", "Consolas", (uint)Colors.Yellow, 230, 650, 20);
+                consoleGraphics.DrawString("LOGO BY FREEPNG.RU   EDUCATIONAL PROJECT ©2019", "Consolas", (uint)Colors.Yellow, 225, 750, 10);
                 ConsoleImage logo = consoleGraphics.LoadImage(@"logo.bmp");
                 consoleGraphics.DrawImage(logo, 255, 300);
                 consoleGraphics.FlipPages();
@@ -68,7 +68,7 @@ namespace Tetris
                     proceed = true;
             }
 
-            System.Threading.Thread.Sleep(100);
+            Utility.SleepLong();
         }
 
         public bool DrawGameOverScreen()
@@ -77,11 +77,11 @@ namespace Tetris
 
             while (!restartGame)
             {
-                canvas = new Rectangle(0, 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, 0x26262626);
+                canvas = new Rectangle(0, 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, (uint)Colors.GreyAlpha);
                 canvas.Render(consoleGraphics);
-                consoleGraphics.DrawString("GAME\r\nOVER", "Consolas", 0xFFFFFF00, 230, 80, 100);
-                consoleGraphics.DrawString("PRESS SPACE TO RESTART", "Consolas", 0xFFFFFF00, 230, 650, 20);
-                consoleGraphics.DrawString("PRESS ESC TO EXIT GAME", "Consolas", 0xFFFFFF00, 230, 680, 20);
+                consoleGraphics.DrawString("GAME\r\nOVER", "Consolas", (uint)Colors.Yellow, 230, 80, 100);
+                consoleGraphics.DrawString("PRESS SPACE TO RESTART", "Consolas", (uint)Colors.Yellow, 230, 650, 20);
+                consoleGraphics.DrawString("PRESS ESC TO EXIT GAME", "Consolas", (uint)Colors.Yellow, 230, 680, 20);
                 consoleGraphics.FlipPages();
 
                 if (Input.IsKeyDown(Keys.ESCAPE))
@@ -94,13 +94,13 @@ namespace Tetris
                 }
             }
 
-            System.Threading.Thread.Sleep(100);
+            Utility.SleepLong();
             return restartGame;
         }
 
         public void DrawBlackCanvas()
         {
-            canvas = new Rectangle(0, 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, 0xFF000000);
+            canvas = new Rectangle(0, 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, (uint)Colors.Black);
             canvas.Render(consoleGraphics);
         }
 
@@ -115,17 +115,17 @@ namespace Tetris
 
             while (!proceed)
             {
-                canvas = new Rectangle(0, 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, 0x26262626);
+                canvas = new Rectangle(0, 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, (uint)Colors.GreyAlpha);
                 canvas.Render(consoleGraphics);
-                consoleGraphics.DrawString("GAME SETTINGS", "Consolas", 0xFFFFFF00, 150, 70, 50);
-                consoleGraphics.DrawString($"LEVEL: {Settings.LevelSelector}", "Consolas", 0xFFFFFF00, 250, cursorStart, 30);
-                consoleGraphics.DrawString($"SPEED: {Settings.SpeedSelector}", "Consolas", 0xFFFFFF00, 250, cursorStart + cursorOffset, 30);
-                consoleGraphics.DrawString($"SHAPES: {Settings.ShapeSetName}", "Consolas", 0xFFFFFF00, 250, cursorStart + cursorOffset * 2, 30);
+                consoleGraphics.DrawString("GAME SETTINGS", "Consolas", (uint)Colors.Yellow, 150, 70, 50);
+                consoleGraphics.DrawString($"LEVEL: {Settings.LevelSelector}", "Consolas", (uint)Colors.Yellow, 250, cursorStart, 30);
+                consoleGraphics.DrawString($"SPEED: {Settings.SpeedSelector}", "Consolas", (uint)Colors.Yellow, 250, cursorStart + cursorOffset, 30);
+                consoleGraphics.DrawString($"SHAPES: {Settings.ShapeSetName}", "Consolas", (uint)Colors.Yellow, 250, cursorStart + cursorOffset * 2, 30);
                 PlaceCursor();
-                consoleGraphics.DrawString("PRESS UP OR DOWN TO NAVIGATE", "Consolas", 0xFFFFFF00, 150, 620, 20);
-                consoleGraphics.DrawString("PRESS ENTER TO CHANGE SETTINGS", "Consolas", 0xFFFFFF00, 150, 650, 20);
-                consoleGraphics.DrawString("PRESS SPACE TO START GAME", "Consolas", 0xFFFFFF00, 150, 680, 20);
-                consoleGraphics.DrawString("PRESS ESC TO EXIT GAME", "Consolas", 0xFFFFFF00, 150, 710, 20);
+                consoleGraphics.DrawString("PRESS UP OR DOWN TO NAVIGATE", "Consolas", (uint)Colors.Yellow, 150, 620, 20);
+                consoleGraphics.DrawString("PRESS ENTER TO CHANGE SETTINGS", "Consolas", (uint)Colors.Yellow, 150, 650, 20);
+                consoleGraphics.DrawString("PRESS SPACE TO START GAME", "Consolas", (uint)Colors.Yellow, 150, 680, 20);
+                consoleGraphics.DrawString("PRESS ESC TO EXIT GAME", "Consolas", (uint)Colors.Yellow, 150, 710, 20);
                 consoleGraphics.FlipPages();
 
                 if (Input.IsKeyDown(Keys.SPACE))
@@ -142,7 +142,7 @@ namespace Tetris
 
             void PlaceCursor()
             {
-                consoleGraphics.DrawString(">>", "Consolas", 0xFFFFFF00, 150, cursorPosition, 30);
+                consoleGraphics.DrawString(">>", "Consolas", (uint)Colors.Yellow, 150, cursorPosition, 30);
             }
 
             void MoveCursorDown()
@@ -150,7 +150,7 @@ namespace Tetris
                 cursorPosition = cursorPosition >= cursorStart + (cursorOffset * 2)
                     ? cursorPosition = cursorStart
                     : cursorPosition + cursorOffset;
-                Thread.Sleep(100);
+                Utility.SleepLong();
             }
 
             void MoveCursorUp()
@@ -158,7 +158,7 @@ namespace Tetris
                 cursorPosition = cursorPosition <= cursorStart
                     ? cursorPosition = cursorStart + (cursorOffset * 2)
                     : cursorPosition - cursorOffset;
-                Thread.Sleep(100);
+                Utility.SleepLong();
             }
 
             void ChangeSettings()
@@ -193,7 +193,7 @@ namespace Tetris
                         Settings.ShapeSet = ShapeSets.Nightmare;
                 }
 
-                Thread.Sleep(30);
+                Utility.SleepMiddle();
             }
         }
 
@@ -204,19 +204,19 @@ namespace Tetris
 
         public void RedrawInGameScreen()
         {
-            canvas = new Rectangle(Settings.canvasOffsetX + 0, Settings.canvasOffsetY + 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, 0xFF000000);
-            screen = new Rectangle(Settings.canvasOffsetX + 0, Settings.canvasOffsetY + 0, Settings.ColumnNumber * Settings.PixelSizeY, Settings.LineNumber * Settings.PixelSizeX, 0xFF262626);
+            canvas = new Rectangle(Settings.canvasOffsetX + 0, Settings.canvasOffsetY + 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, (uint)Colors.Black);
+            screen = new Rectangle(Settings.canvasOffsetX + 0, Settings.canvasOffsetY + 0, Settings.ColumnNumber * Settings.PixelSizeY, Settings.LineNumber * Settings.PixelSizeX, (uint)Colors.Grey);
             canvas.Render(consoleGraphics);
             screen.Render(consoleGraphics);
 
             foreach (Pixel pixel in currentGrid.PixelData)
                 pixel.Render(consoleGraphics);
 
-            consoleGraphics.DrawString($"   SCORE: {Settings.CurrentScore}", "Consolas", 0xFFFFFF00, 230, 680, 20);
-            consoleGraphics.DrawString($"HI-SCORE: {Settings.HiScore}", "Consolas", 0xFFFFFF00, 230, 710, 20);
+            consoleGraphics.DrawString($"   SCORE: {Settings.CurrentScore}", "Consolas", (uint)Colors.Yellow, 230, 680, 20);
+            consoleGraphics.DrawString($"HI-SCORE: {Settings.HiScore}", "Consolas", (uint)Colors.Yellow, 230, 710, 20);
 
             consoleGraphics.FlipPages();
-            System.Threading.Thread.Sleep(10);
+            Utility.SleepShort();
         }   
 
         public void SetCurrentTetromino()
@@ -453,7 +453,7 @@ namespace Tetris
                         RestorePositionAndRotation();
                     }
                 }
-                Thread.Sleep(50);
+                Utility.SleepMiddle();
                 DisableKeypress();
             }
 

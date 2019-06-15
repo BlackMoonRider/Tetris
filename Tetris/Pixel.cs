@@ -17,8 +17,8 @@ namespace Tetris
 
         private const int shrinkWidth = 2;
         private const int shrinkHeight = 2;
-        private const uint primaryColor = 0xFFFFFFFF;
-        private const uint secondaryColor = 0xFFFF0000;
+        private const uint primaryColor = (uint)Colors.White;
+        private const uint secondaryColor = (uint)Colors.Red;
 
         public Pixel(int x, int y, int width = Settings.PixelSizeX, int height = Settings.PixelSizeY, uint color = primaryColor)
         {

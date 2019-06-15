@@ -63,5 +63,20 @@ namespace Tetris
 
             return result;
         }
+
+        public static void SleepLong()
+        {
+            System.Threading.Thread.Sleep(100);
+        }
+
+        public static void SleepMiddle()
+        {
+            System.Threading.Thread.Sleep(50);
+        }
+
+        public static void SleepShort()
+        {
+            System.Threading.Thread.Sleep(20);
+        }
     }
 }

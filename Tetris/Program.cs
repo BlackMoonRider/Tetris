@@ -58,8 +58,6 @@ namespace Tetris
                 engine.PutResultOnPermanentGrid();
 
             }
-
-
         }
     }
 }
