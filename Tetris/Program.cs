@@ -23,9 +23,7 @@ namespace Tetris
             Engine engine = new Engine(consoleGraphics);
 
             engine.DrawTitileScreen();
-
             engine.DrawGameMenu();
-            engine.DrawBlackCanvas();
             engine.SetLevel();
 
             while (true)
@@ -39,7 +37,6 @@ namespace Tetris
                     if (engine.DrawGameOverScreen())
                     {
                         engine.DrawGameMenu();
-                        engine.DrawBlackCanvas();
                         engine.SetLevel();
                         continue;
                     }

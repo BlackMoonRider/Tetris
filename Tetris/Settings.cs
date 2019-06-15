@@ -26,7 +26,7 @@ namespace Tetris
         public static int SpeedSelector = 0;
         public static int Speed => 10 - SpeedSelector;
 
-        public static ShapeSets ShapeSet = ShapeSets.NotTooRough;
+        public static ShapeSets ShapeSet = ShapeSets.TooYoungToDie;
         public static string ShapeSetName
         {
             get

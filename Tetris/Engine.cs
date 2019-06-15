@@ -98,7 +98,7 @@ namespace Tetris
             return restartGame;
         }
 
-        public void DrawBlackCanvas()
+        private void DrawBlackCanvas()
         {
             canvas = new Rectangle(0, 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, (uint)Colors.Black);
             canvas.Render(consoleGraphics);
@@ -118,9 +118,9 @@ namespace Tetris
                 canvas = new Rectangle(0, 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, (uint)Colors.GreyAlpha);
                 canvas.Render(consoleGraphics);
                 consoleGraphics.DrawString("GAME SETTINGS", "Consolas", (uint)Colors.Yellow, 150, 70, 50);
-                consoleGraphics.DrawString($"LEVEL: {Settings.LevelSelector}", "Consolas", (uint)Colors.Yellow, 250, cursorStart, 30);
-                consoleGraphics.DrawString($"SPEED: {Settings.SpeedSelector}", "Consolas", (uint)Colors.Yellow, 250, cursorStart + cursorOffset, 30);
-                consoleGraphics.DrawString($"SHAPES: {Settings.ShapeSetName}", "Consolas", (uint)Colors.Yellow, 250, cursorStart + cursorOffset * 2, 30);
+                consoleGraphics.DrawString($"LEVEL: {Settings.LevelSelector}", "Consolas", (uint)Colors.Yellow, 240, cursorStart, 30);
+                consoleGraphics.DrawString($"SPEED: {Settings.SpeedSelector}", "Consolas", (uint)Colors.Yellow, 240, cursorStart + cursorOffset, 30);
+                consoleGraphics.DrawString($"SHAPES: {Settings.ShapeSetName}", "Consolas", (uint)Colors.Yellow, 240, cursorStart + cursorOffset * 2, 30);
                 PlaceCursor();
                 consoleGraphics.DrawString("PRESS UP OR DOWN TO NAVIGATE", "Consolas", (uint)Colors.Yellow, 150, 620, 20);
                 consoleGraphics.DrawString("PRESS ENTER TO CHANGE SETTINGS", "Consolas", (uint)Colors.Yellow, 150, 650, 20);
@@ -150,6 +150,7 @@ namespace Tetris
                 cursorPosition = cursorPosition >= cursorStart + (cursorOffset * 2)
                     ? cursorPosition = cursorStart
                     : cursorPosition + cursorOffset;
+
                 Utility.SleepLong();
             }
 
@@ -158,6 +159,7 @@ namespace Tetris
                 cursorPosition = cursorPosition <= cursorStart
                     ? cursorPosition = cursorStart + (cursorOffset * 2)
                     : cursorPosition - cursorOffset;
+
                 Utility.SleepLong();
             }
 
@@ -195,6 +197,8 @@ namespace Tetris
 
                 Utility.SleepMiddle();
             }
+
+            DrawBlackCanvas();
         }
 
         public void SetLevel()
@@ -328,7 +332,7 @@ namespace Tetris
             currentGrid.FeedWithBoolData(grid);
         }
 
-        public void BackUpPositionAndRotation()
+        private void BackUpPositionAndRotation()
         {
             backupPositionLine = AbstractShape.CurrentTetrominoPositionLine;
             backupPositionColumn = AbstractShape.CurrentTetrominoPositionColumn;
@@ -360,7 +364,7 @@ namespace Tetris
             
         }
 
-        public void RestorePositionAndRotation()
+        private void RestorePositionAndRotation()
         {
             AbstractShape.CurrentTetrominoPositionLine = backupPositionLine;
             AbstractShape.CurrentTetrominoPositionColumn = backupPositionColumn;
