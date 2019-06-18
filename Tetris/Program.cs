@@ -10,7 +10,6 @@ namespace Tetris
 {
     class Program
     {
-        static public Random random = new Random();
         static void Main(string[] args)
         {
             Console.WindowWidth = Settings.ConsoleWidth;

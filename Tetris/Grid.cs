@@ -49,7 +49,7 @@ namespace Tetris
         {
             for (int line = startLine; line < Settings.LineNumber; line++)
                 for (int column = 0; column < Settings.ColumnNumber; column++)
-                    if (Program.random.Next(0, 2) == 1)
+                    if (Utility.Random.Next(0, 2) == 1)
                         BoolData[line, column] = true;
         }
 
