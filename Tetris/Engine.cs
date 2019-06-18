@@ -30,6 +30,43 @@ namespace Tetris
             SetTimer();
         }
 
+        public void Play()
+        {
+            DrawTitileScreen();
+            DrawGameMenu();
+            SetLevel();
+
+            while (true)
+            {
+                SetCurrentTetromino();
+
+                AbstractShape.CurrentTetrominoCanMoveDown = true;
+
+                if (DoesCurrentShapeCollideWithData())
+                {
+                    if (DrawGameOverScreen())
+                    {
+                        DrawGameMenu();
+                        SetLevel();
+                        continue;
+                    }
+                }
+
+                while (AbstractShape.CurrentTetrominoCanMoveDown)
+                {
+
+                    CopyGridToCurrentGrid();
+                    CheckKeyboardInputAgainstCanvasAndData();
+                    MoveCurrentShapeDown();
+                    PutCurrentTetrominoOnCurrentGrid();
+                    RedrawInGameScreen();
+                }
+
+                PutResultOnPermanentGrid();
+
+            }
+        }
+
         private void GameReset()
         {
             grid = new Grid();
@@ -50,7 +87,7 @@ namespace Tetris
             keypressIsAllowed = false;
         }
 
-        public void DrawTitileScreen()
+        private void DrawTitileScreen()
         {
             bool proceed = false;
 
@@ -71,7 +108,7 @@ namespace Tetris
             Utility.SleepLong();
         }
 
-        public bool DrawGameOverScreen()
+        private bool DrawGameOverScreen()
         {
             bool restartGame = false;
 
@@ -104,7 +141,7 @@ namespace Tetris
             canvas.Render(consoleGraphics);
         }
 
-        public void DrawGameMenu()
+        private void DrawGameMenu()
         {
             bool proceed = false;
 
@@ -201,12 +238,12 @@ namespace Tetris
             DrawBlackCanvas();
         }
 
-        public void SetLevel()
+        private void SetLevel()
         {
             grid.FillBoolDataWithRandomData(Settings.Level);
         }
 
-        public void RedrawInGameScreen()
+        private void RedrawInGameScreen()
         {
             canvas = new Rectangle(Settings.canvasOffsetX + 0, Settings.canvasOffsetY + 0, consoleGraphics.ClientWidth, consoleGraphics.ClientHeight, (uint)Colors.Black);
             screen = new Rectangle(Settings.canvasOffsetX + 0, Settings.canvasOffsetY + 0, Settings.ColumnNumber * Settings.PixelSizeY, Settings.LineNumber * Settings.PixelSizeX, (uint)Colors.Grey);
@@ -221,9 +258,9 @@ namespace Tetris
 
             consoleGraphics.FlipPages();
             Utility.SleepShort();
-        }   
+        }
 
-        public void SetCurrentTetromino()
+        private void SetCurrentTetromino()
         {
             int nextShape = Utility.Random.Next((int)Settings.ShapeSet);
 
@@ -320,14 +357,14 @@ namespace Tetris
             AbstractShape.CurrentTetrominoPositionColumn = 4;
         }
 
-        public void PutCurrentTetrominoOnCurrentGrid()
+        private void PutCurrentTetrominoOnCurrentGrid()
         {
             CopyGridToCurrentGrid(); 
             currentGrid.PutCurrentShapeOnBoolData(); 
             currentGrid.ConvertBoolDataToPixelData();
         }
 
-        public void CopyGridToCurrentGrid()
+        private void CopyGridToCurrentGrid()
         {
             currentGrid.FeedWithBoolData(grid);
         }
@@ -338,8 +375,8 @@ namespace Tetris
             backupPositionColumn = AbstractShape.CurrentTetrominoPositionColumn;
             backupRotation = (bool[,])AbstractShape.CurrentTetrominoRotation.Clone();
         }
-        
-        public void MoveCurrentShapeDown()
+
+        private void MoveCurrentShapeDown()
         {
             if (speedTracking > 0)
             {
@@ -371,13 +408,13 @@ namespace Tetris
             AbstractShape.CurrentTetrominoRotation = (bool[,])backupRotation.Clone();
         }
 
-        public void PutResultOnPermanentGrid()
+        private void PutResultOnPermanentGrid()
         {
             currentGrid.DropFullLines();
             grid.FeedWithBoolData(currentGrid);
         }
 
-        public bool DoesCurrentShapeCollideWithData()
+        private bool DoesCurrentShapeCollideWithData()
         {
             bool doesCollide = false;
 
@@ -408,7 +445,7 @@ namespace Tetris
             return isBeyond;
         }
 
-        public void CheckKeyboardInputAgainstCanvasAndData()
+        private void CheckKeyboardInputAgainstCanvasAndData()
         {
             BackUpPositionAndRotation();
 

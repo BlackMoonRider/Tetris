@@ -22,39 +22,7 @@ namespace Tetris
             ConsoleGraphics consoleGraphics = new ConsoleGraphics();
             Engine engine = new Engine(consoleGraphics);
 
-            engine.DrawTitileScreen();
-            engine.DrawGameMenu();
-            engine.SetLevel();
-
-            while (true)
-            {
-                engine.SetCurrentTetromino();
-
-                AbstractShape.CurrentTetrominoCanMoveDown = true;
-
-                if (engine.DoesCurrentShapeCollideWithData())
-                {
-                    if (engine.DrawGameOverScreen())
-                    {
-                        engine.DrawGameMenu();
-                        engine.SetLevel();
-                        continue;
-                    }
-                }
-
-                while (AbstractShape.CurrentTetrominoCanMoveDown)
-                {
-
-                    engine.CopyGridToCurrentGrid();
-                    engine.CheckKeyboardInputAgainstCanvasAndData();
-                    engine.MoveCurrentShapeDown();
-                    engine.PutCurrentTetrominoOnCurrentGrid();
-                    engine.RedrawInGameScreen();
-                }
-
-                engine.PutResultOnPermanentGrid();
-
-            }
+            engine.Play();
         }
     }
 }
